@@ -1,0 +1,7 @@
+<!--index.wxml-->
+<view class="container">
+  <text class="splash_time">{{second}}秒</text>
+  <view class="splash_full_screen_img">
+    <image style="width: 100%; height: 100%; background-color: #eeeeee;" mode="aspectFill" src="http://127.0.0.1/wxapp/index0.jpg"></image>
+  </view>
+</view>
