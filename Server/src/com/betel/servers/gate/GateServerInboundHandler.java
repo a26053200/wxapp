@@ -1,7 +1,5 @@
 package com.betel.servers.gate;
 
-import com.betel.servers.balance.BalanceMonitor;
-import com.betel.servers.balance.BalanceServerInboundHandler;
 import com.betel.utils.BytesUtils;
 import com.betel.utils.StringUtils;
 import io.netty.buffer.ByteBuf;
@@ -19,7 +17,7 @@ import org.apache.log4j.Logger;
  */
 public class GateServerInboundHandler extends ChannelInboundHandlerAdapter
 {
-    final static Logger logger = Logger.getLogger(BalanceServerInboundHandler.class.getName());
+    final static Logger logger = Logger.getLogger(GateServerInboundHandler.class.getName());
 
     private GateMonitor monitor;
 

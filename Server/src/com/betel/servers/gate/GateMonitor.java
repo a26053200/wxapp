@@ -2,6 +2,7 @@ package com.betel.servers.gate;
 
 import com.alibaba.fastjson.JSONObject;
 import com.betel.common.Monitor;
+import com.betel.consts.Action;
 import com.betel.consts.FieldName;
 import com.betel.servers.balance.BalanceServer;
 import io.netty.channel.ChannelHandlerContext;
@@ -23,12 +24,6 @@ public class GateMonitor extends Monitor
     }
     private BalanceServer balanceServer;
 
-    private ChannelHandlerContext gameServerContext;
-
-    public ChannelHandlerContext getGameServerContext()
-    {
-        return gameServerContext;
-    }
 
     public void SetBalanceServer(BalanceServer balanceServer)
     {
@@ -42,10 +37,14 @@ public class GateMonitor extends Monitor
     @Override
     protected void RespondJson(ChannelHandlerContext ctx, JSONObject jsonObject)
     {
-        String server = jsonObject.get(FieldName.SERVER).toString();
-        switch (server)
-        {
 
+        String action = jsonObject.get("action").toString();
+
+        switch (action)
+        {
+            case Action.LOGIN_ACCOUNT:
+                //login(ctx, jsonObject);
+                break;
         }
     }
 

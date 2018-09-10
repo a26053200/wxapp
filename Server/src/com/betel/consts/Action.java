@@ -12,7 +12,7 @@ public class Action
 
     public final static String NONE = "none";
     //游戏服务器和网关服务器握手
-    public final static String HANDSHAKE_GAME2GATE = "handshake_game2gate";
+    public final static String HANDSHAKE_BUSINESS2BALANCE = "handshake_business2balance";
     //登陆帐号服务器
     public final static String LOGIN_ACCOUNT = "login_account";
     //登陆游戏服务器

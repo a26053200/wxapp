@@ -1,4 +1,4 @@
-package com.betel.servers.balance;
+package com.betel.servers.business;
 
 import com.betel.common.Monitor;
 import io.netty.channel.Channel;
@@ -9,27 +9,26 @@ import io.netty.util.concurrent.GenericFutureListener;
 import org.apache.log4j.Logger;
 
 /**
- * @ClassName: BalanceServerHandler
+ * @ClassName: GateServerHandler
  * @Description: TODO
  * @Author: zhengnan
- * @Date: 2018/9/9 0:33
+ * @Date: 2018/6/1 21:05
  */
-public class BalanceServerHandler extends SimpleChannelInboundHandler<Monitor>
+public class BusinessServerHandler extends SimpleChannelInboundHandler<Monitor>
 {
-    final static Logger logger = Logger.getLogger(BalanceServerHandler.class.getName());
+    final static Logger logger = Logger.getLogger(BusinessServerHandler.class.getName());
 
-    protected BalanceMonitor monitor;
+    protected BusinessMonitor monitor;
 
-    public BalanceServerHandler(BalanceMonitor monitor)
+    public BusinessServerHandler(BusinessMonitor monitor)
     {
         this.monitor = monitor;
     }
-
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception
     {  // (2)
         Channel incoming = ctx.channel();
-        logger.info("Client ip:" + incoming.remoteAddress() + " is added");
+        logger.info("BusinessServer Client ip:" + incoming.remoteAddress() + " is added");
         // Broadcast a message to multiple Channels
         // channels.writeAndFlush("[SERVER] - " + incoming.remoteAddress() + " 加入\n");
 
@@ -40,38 +39,27 @@ public class BalanceServerHandler extends SimpleChannelInboundHandler<Monitor>
     protected void channelRead0(ChannelHandlerContext ctx, Monitor monitor) throws Exception
     {
         Channel incoming = ctx.channel();
-        logger.info("Channel:" + incoming.id());
+        logger.info("BusinessServer Channel:" + incoming.id());
     }
-
     @Override
-    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception
-    {
+    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
         super.channelReadComplete(ctx);
         Channel incoming = ctx.channel();
-        logger.info("Client ip:" + incoming.remoteAddress() + " channel has flush over");
+        logger.info("BusinessServer Client ip:" + incoming.remoteAddress() + " channel has flush over");
         ctx.flush();
     }
-
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception
     { // (5)
         Channel incoming = ctx.channel();
-        logger.info("Client ip:" + incoming.remoteAddress() + " is online");
+        logger.info("BusinessServer Client ip:" + incoming.remoteAddress() + " is online");
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception
     { // (6)
         Channel incoming = ctx.channel();
-//        String ra1 = incoming.remoteAddress().toString();
-//        String ra2 = monitor.getBusinessServerContext().channel().remoteAddress().toString();
-//        if(ra1.equals(ra2))
-//        {
-//            logger.info("BusinessServer Client ip:" + incoming.remoteAddress() + " is offline");
-//        }else{
-//            logger.info("Client ip:" + incoming.remoteAddress() + " is offline");
-//            monitor.notifyGameServerClientOffline(ctx);//通知游戏服务器:玩家客户端已经离线
-//        }
+        logger.info("BusinessServer Client ip:" + incoming.remoteAddress() + " is offline");
         monitor.getChannelGroup().remove(ctx.channel());
     }
 
@@ -79,10 +67,10 @@ public class BalanceServerHandler extends SimpleChannelInboundHandler<Monitor>
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
     {
         Channel incoming = ctx.channel();
-        logger.error("Client ip:" + incoming.remoteAddress() + " is exception");
+        logger.error("BusinessServer Client ip:" + incoming.remoteAddress() + " is exception");
         // 当出现异常就关闭连接
-        //cause.printStackTrace();
-        logger.info(String.format("[GateServer] 远程IP:%s 的链接出现异常,其通道即将关闭", incoming.remoteAddress()));
+        cause.printStackTrace();
+        logger.info(String.format("[BusinessServer] 远程IP:%s 的链接出现异常,其通道即将关闭", incoming.remoteAddress()));
         ctx.close().addListener(new GenericFutureListener<Future<? super Void>>()
         {
             @Override

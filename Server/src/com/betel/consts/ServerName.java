@@ -10,9 +10,9 @@ public class ServerName
 {
     public static final String CLIENT = "client";
 
-    public static final String ACCOUNT_SERVER = "AccountServer";
-
     public static final String GATE_SERVER = "GateServer";
 
-    public static final String GAME_SERVER = "GameServer";
+    public static final String BALANCE_SERVER = "BalanceServer";
+
+    public static final String BUSINESS_SERVER = "BusinessServer";//核心业务服务器
 }
