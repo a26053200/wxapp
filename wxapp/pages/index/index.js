@@ -4,23 +4,18 @@ const app = getApp()
 
 Page({
   data: {
-    motto: 'Hello World',
-    userInfo: {},
-    hasUserInfo: false,
-    canIUse: wx.canIUse('button.open-type.getUserInfo'),
-    second: 5
+    second: 2
   },
-  //事件处理函数
-  bindViewTap: function() {
-    wx.navigateTo({
-      url: '../logs/logs'
-    })
-  },
+
   onLoad: function() {
     this.countdown(this, function() {
+      wx.reLaunch({
+        url: '../home/home',
+      })
       console.log("倒计时结束进入主页")
     });
   },
+
   countdown: function(that, overCallback) {
     var _that = that
     var second = that.data.second
