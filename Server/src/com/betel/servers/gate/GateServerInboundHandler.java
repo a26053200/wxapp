@@ -39,11 +39,13 @@ public class GateServerInboundHandler extends ChannelInboundHandlerAdapter
             String uri = request.uri();
             try
             {
+                logger.info("[recv]" + uri);
                 res = uri.substring(1);
                 if (!StringUtils.isNullOrEmpty(res))
                 {
-                    logger.info("[recv]" + res);
-                    monitor.recvJson(ctx, res);
+                    monitor.recvWxAppJson(ctx, res);
+                }else{
+                    responseError(ctx, "Http request data is Empty!");
                 }
             }
             catch (Exception e)
@@ -67,7 +69,7 @@ public class GateServerInboundHandler extends ChannelInboundHandlerAdapter
                 else
                 {
                     logger.info("[recv]" + res);
-                    monitor.recvJson(ctx, res);
+                    monitor.recvWxAppJson(ctx, res);
                 }
             }
             catch (Exception e)

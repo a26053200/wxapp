@@ -1,4 +1,4 @@
-package com.betel.servers.business;
+package com.betel.servers.gate;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -13,13 +13,13 @@ import java.util.List;
  * @Author: zhengnan
  * @Date: 2018/6/1 21:00
  */
-public class BusinessServerDecoder extends ByteArrayDecoder
+public class GateClientDecoder extends ByteArrayDecoder
 {
-    final static Logger logger = Logger.getLogger(BusinessServerDecoder.class);
+    final static Logger logger = Logger.getLogger(GateClientDecoder.class);
 
-    BusinessMonitor monitor;
+    GateMonitor monitor;
 
-    public BusinessServerDecoder(BusinessMonitor monitor)
+    public GateClientDecoder(GateMonitor monitor)
     {
         this.monitor = monitor;
     }
@@ -27,6 +27,6 @@ public class BusinessServerDecoder extends ByteArrayDecoder
     protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception
     {
         super.decode(ctx, msg, out);
-        monitor.recvJsonBuff(ctx,msg);
+        monitor.recvByteBuf(ctx,msg);
     }
 }

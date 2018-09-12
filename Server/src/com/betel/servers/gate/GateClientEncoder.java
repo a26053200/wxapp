@@ -1,4 +1,4 @@
-package com.betel.servers.business;
+package com.betel.servers.gate;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.bytes.ByteArrayEncoder;
@@ -12,13 +12,13 @@ import java.util.List;
  * @Author: zhengnan
  * @Date: 2018/6/1 21:01
  */
-public class BusinessServerEncoder extends ByteArrayEncoder
+public class GateClientEncoder extends ByteArrayEncoder
 {
-    final static Logger logger = Logger.getLogger(BusinessServerEncoder.class);
+    final static Logger logger = Logger.getLogger(GateClientEncoder.class);
 
-    BusinessMonitor monitor;
+    GateMonitor monitor;
 
-    public BusinessServerEncoder(BusinessMonitor monitor)
+    public GateClientEncoder(GateMonitor monitor)
     {
         this.monitor = monitor;
     }

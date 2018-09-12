@@ -107,6 +107,20 @@ public abstract class Monitor
         }
     }
 
+    public void recvWxAppJson(ChannelHandlerContext ctx, String json)
+    {
+        try
+        {
+            if(json.startsWith("?"))
+                json = json.substring(1);//去掉问号
+            JSONObject jsonObject = JSONObject.parseObject(json);
+            RespondJson(ctx, jsonObject);
+        }
+        catch (JSONException ex)
+        {
+            ex.printStackTrace();
+        }
+    }
     public void recvJsonBuff(ChannelHandlerContext ctx, ByteBuf buf)
     {
         String json = BytesUtils.readString(buf);

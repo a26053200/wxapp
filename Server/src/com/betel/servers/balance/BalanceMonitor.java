@@ -5,6 +5,7 @@ import com.betel.common.Monitor;
 import com.betel.consts.Action;
 import com.betel.consts.FieldName;
 import com.betel.consts.ServerName;
+import com.betel.utils.BytesUtils;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.log4j.Logger;
 
@@ -36,6 +37,12 @@ public class BalanceMonitor extends Monitor
         String server = jsonObject.get(FieldName.SERVER).toString();
         switch (server)
         {
+            // 核心业务服务器
+            case ServerName.BUSINESS_SERVER:
+            {
+
+            }
+            break;
             //均衡服务器的消息直接处理
             case ServerName.BALANCE_SERVER:
             {
@@ -50,5 +57,12 @@ public class BalanceMonitor extends Monitor
             }
             break;
         }
+    }
+
+    // 转发给
+    private void forward2businessServer(JSONObject jsonObject)
+    {
+        byte[] bytes = BytesUtils.string2Bytes(jsonObject.toString());
+        businessServerContext.channel().writeAndFlush(bytes);
     }
 }

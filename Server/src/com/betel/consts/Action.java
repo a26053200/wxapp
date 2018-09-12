@@ -8,35 +8,34 @@ package com.betel.consts;
  */
 public class Action
 {
+    /**
+     *
+     */
     public final static String NAME = "action";
 
+    /**
+     *
+     */
     public final static String NONE = "none";
-    //游戏服务器和网关服务器握手
+
+
+    /**
+     * 网关服务器和均衡服务器握手
+     */
+    public final static String HANDSHAKE_GATE2BALANCE = "handshake_gate2balance";
+
+    /**
+     * 业务服务器和均衡服务器握手
+     */
     public final static String HANDSHAKE_BUSINESS2BALANCE = "handshake_business2balance";
-    //登陆帐号服务器
-    public final static String LOGIN_ACCOUNT = "login_account";
-    //登陆游戏服务器
-    public final static String LOGIN_GAME_SEVER = "login_game_server";
-    //登出游戏服务器
-    public final static String LOGOUT_GAME_SEVER = "logout_game_server";
 
     /**
-     * Player 玩家
+     * 小程序通过服务器登陆微信官方接口服务器
      */
-    //游戏玩家信息
-    public final static String PUSH_PLAYER_INFO = "push@player_info";
+    public final static String MP_LOGIN_WX_SERVER = "mp_login_wx_server";
 
     /**
-     * Role 游戏角色
+     * 小程序用户获取个人信息
      */
-    //获取随机角色名
-    public final static String ROLE_RANDOM_NAME = "role_random_name";
-    //角色创建
-    public final static String ROLE_CREATE = "role_create";
-    //选择角色并进入游戏
-    public final static String ROLE_SELECT_ENTER_GAME = "select_role_enter_game";
-    /**
-     * Game 游戏
-     */
-    public final static String PUSH_ROLE_INFO = "push@role_info";
+    public final static String MP_GET_PROFILE = "mp_get_profile";
 }

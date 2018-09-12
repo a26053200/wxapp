@@ -2,6 +2,7 @@ package com.betel.servers.gate;
 
 import com.betel.common.BaseServer;
 import com.betel.common.Debug;
+import com.betel.consts.ServerName;
 import com.betel.servers.balance.BalanceServer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -56,10 +57,13 @@ public class GateServer extends BaseServer
             logger.info(ServerName + " startup successful!!!");
             ChannelFuture f = b.bind(port).sync();
 
-            logger.info("Try to bootstrap balance server...");
-            BalanceServer bs = new BalanceServer(8081);
-            bs.run();
-            monitor.SetBalanceServer(bs);
+            //网关客户端连接均衡服务器
+            GateClient.start(com.betel.consts.ServerName.BALANCE_SERVER,"",8081,monitor);
+
+            //logger.info("Try to bootstrap balance server...");
+            //BalanceServer bs = new BalanceServer(8081);
+            //bs.run();
+            //monitor.SetBalanceServer(bs);
             f.channel().closeFuture().sync();
 
             logger.info(ServerName + " close up...");
