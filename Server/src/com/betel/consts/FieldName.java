@@ -16,9 +16,15 @@ public class FieldName
 
     public static final String STATE = "state";
 
-    public static final String ROLE_NAME = "roleName";
+    public static final String FORWARD_SERVER = "forward_server"; //转发服务器
 
-    public static final String ROLE_SIMPLE_INFO = "roleSimpleInfo";
+    /**  探测  **/
+    public static final String PROBE_STATE = "probe_state"; //探测结果
 
-    public static final String ROLE_INFO = "roleInfo";
+    public static final String PROBE_MSG = "probe_msg"; //探测
+
+    /**  登陆微信接口服务器  **/
+    public static final String WX_API_SESSION_KEY = "wx_api_session_key";
+
+    public static final String WX_API_OPEN_ID = "wx_api_openid";
 }

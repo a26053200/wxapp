@@ -22,9 +22,9 @@ public class BalanceServer extends BaseServer
 {
     public static final String ServerName = "BalanceServer";
 
-    public BalanceServer(int port)
+    public BalanceServer()
     {
-        super(ServerName, port);
+        super(ServerName);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class BalanceServer extends BaseServer
                     .childOption(ChannelOption.SO_KEEPALIVE, true); // (6)
 
 
-            ChannelFuture f = b.bind(port).sync(); // (7)
+            ChannelFuture f = b.bind(srvCfg.getPort()).sync(); // (7)
             logger.info(ServerName + " startup successful!!!");
             //网关客户端连接游戏服务器
             //GateClient.start(ServerConstant.ServerName.GAME_SERVER,"",8090,monitor);
@@ -71,15 +71,6 @@ public class BalanceServer extends BaseServer
     public static void main(String[] args) throws Exception
     {
         Debug.initLog("[" + ServerName + "]", "log4j_gate_server.properties");
-        int port;
-        if (args.length > 0)
-        {
-            port = Integer.parseInt(args[0]);
-        }
-        else
-        {
-            port = 8081;
-        }
-        new BalanceServer(port).run();
+        new BalanceServer().run();
     }
 }

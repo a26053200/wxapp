@@ -54,7 +54,7 @@ public class Uint {
 	public static final long readUnsignedInt(byte[] byte32)
     {
     	BigInteger bigInt = readUnsignedInt32(byte32);
-    	return new Long(bigInt.toString());
+    	return Long.parseLong(bigInt.toString());
     }
 	private static final BigInteger readUnsignedInt32(byte[] readBuffer) {
         if (readBuffer == null || readBuffer.length < 4)

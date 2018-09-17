@@ -27,6 +27,6 @@ public class BalanceServerDecoder extends ByteArrayDecoder
     protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception
     {
         super.decode(ctx, msg, out);
-        monitor.recvByteBuf(ctx,msg);
+        monitor.recvJsonBuff(ctx,msg);
     }
 }

@@ -1,5 +1,7 @@
 package com.betel.common;
 
+import com.betel.config.ServerConfigVo;
+import com.betel.config.ServerConfig;
 import com.betel.database.RedisClient;
 import com.betel.utils.IdGenerator;
 import com.betel.utils.NetUtils;
@@ -15,20 +17,14 @@ public abstract class BaseServer
 {
     private Logger logger = Logger.getLogger(BaseServer.class);
 
-    protected int port;
+    protected ServerConfigVo srvCfg;
 
-    protected String serverName;
-
-    protected String localHost;
-
-    public BaseServer(String serverName, int port)
+    public BaseServer(String serverName)
     {
-        this.serverName = serverName;
-        this.port = port;
-        this.localHost = NetUtils.GetLocalHostAddress();
-        logger.info("[" + serverName + "] start " + this.localHost + ":" + this.port);
+        srvCfg = ServerConfig.getServerConfig(serverName);
+        logger.info("[" + serverName + "] start " + srvCfg.getHost() + ":" + srvCfg.getPort());
         //连接数据库
-        RedisClient.getInstance().connectDB("127.0.0.1");
+        RedisClient.getInstance().connectDB(srvCfg.getDbHost(),srvCfg.getDbPort());
         //Id生成器
         IdGenerator.init(Thread.currentThread().getId());
     }

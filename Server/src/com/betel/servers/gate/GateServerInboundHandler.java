@@ -89,7 +89,7 @@ public class GateServerInboundHandler extends ChannelInboundHandlerAdapter
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) throws Exception
     {
-        //logger.info("http server channelReadComplete..");
+        logger.info("Gate Http server channelReadComplete..");
         ctx.flush();//刷新后才将数据发出到SocketChannel
     }
 

@@ -2,6 +2,8 @@ package com.betel.servers.business;
 
 import com.betel.common.BaseServer;
 import com.betel.common.Debug;
+import com.betel.config.ServerConfig;
+import com.betel.config.ServerConfigVo;
 import com.betel.consts.ServerName;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -23,9 +25,9 @@ public class BusinessServer extends BaseServer
 {
     public static final String ServerName = "BusinessServer";
 
-    public BusinessServer(int port)
+    public BusinessServer()
     {
-        super(ServerName,port);
+        super(ServerName);
     }
 
     @Override
@@ -53,10 +55,11 @@ public class BusinessServer extends BaseServer
                     }).option(ChannelOption.SO_BACKLOG, 128)          // (5)
                     .childOption(ChannelOption.SO_KEEPALIVE, true); // (6)
 
-            ChannelFuture f = b.bind(port).sync(); // (7)
+            ChannelFuture f = b.bind(srvCfg.getPort()).sync(); // (7)
             logger.info(ServerName + " startup successful!!!");
             //业务服务器连接LoadBalanceServer
-            BusinessClient.start(com.betel.consts.ServerName.BALANCE_SERVER,"127.0.0.1",8081,monitor);
+            ServerConfigVo balanceServer = ServerConfig.getServerConfig(com.betel.consts.ServerName.BALANCE_SERVER);
+            BusinessClient.start(balanceServer,monitor);
             f.channel().closeFuture().sync();
             logger.info(ServerName + " close up...");
         }
@@ -70,15 +73,6 @@ public class BusinessServer extends BaseServer
     public static void main(String[] args) throws Exception
     {
         Debug.initLog("[" + ServerName + "]","log4j_business_server.properties");
-        int port;
-        if (args.length > 0)
-        {
-            port = Integer.parseInt(args[0]);
-        }
-        else
-        {
-            port = 8090;
-        }
-        new BusinessServer(port).run();
+        new BusinessServer().run();
     }
 }

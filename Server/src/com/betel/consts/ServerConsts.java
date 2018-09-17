@@ -6,7 +6,7 @@ package com.betel.consts;
  * @Author: zhengnan
  * @Date: 2018/9/8 22:42
  */
-public class ServerConfig
+public class ServerConsts
 {
     public static final String CHARSET_UTF_8 = "UTF-8";
 

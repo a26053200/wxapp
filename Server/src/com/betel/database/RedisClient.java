@@ -28,13 +28,6 @@ public class RedisClient
     {
     }
 
-    public Jedis connectDB(String host)
-    {
-        if (jedis == null)
-            jedis = connectDB(host, 6379);
-        return jedis;
-    }
-
     public Jedis connectDB(String host, int port)
     {
         if (jedis == null)

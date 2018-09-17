@@ -2,7 +2,7 @@ package com.betel.utils;
 
 import java.io.UnsupportedEncodingException;
 
-import com.betel.consts.ServerConfig;
+import com.betel.consts.ServerConsts;
 
 /**    
  * @FileName: TypeUtil.java  
@@ -29,7 +29,7 @@ public class TypeUtil {
 		{
 			if (temp instanceof String) {
 				try {
-					len += ((String)temp).getBytes(ServerConfig.CHARSET_UTF_8).length + 2;
+					len += ((String)temp).getBytes(ServerConsts.CHARSET_UTF_8).length + 2;
 				} catch (UnsupportedEncodingException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

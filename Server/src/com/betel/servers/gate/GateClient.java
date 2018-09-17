@@ -1,5 +1,6 @@
 package com.betel.servers.gate;
 
+import com.betel.config.ServerConfigVo;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -29,12 +30,12 @@ public class GateClient
 
     public boolean isDead = true;
 
-    public GateClient(String host, int port, GateMonitor monitor, String serverName)
+    public GateClient(ServerConfigVo srvCfg,GateMonitor monitor)
     {
-        this.host = host;
-        this.port = port;
+        this.host = srvCfg.getHost();
+        this.port = srvCfg.getPort();
         this.monitor = monitor;
-        this.serverName = serverName;
+        this.serverName = srvCfg.getName();
     }
 
     public void run() throws Exception
@@ -61,7 +62,8 @@ public class GateClient
             ChannelFuture f = b.connect(host, port).sync();
             channel = f.channel();
             logger.info("GateClient connect " + this.serverName + " successful!!!");
-            //monitor.SetGameServerClient(this);
+            monitor.SetGateServerClient(this);
+            monitor.handshake(channel);
             f.channel().closeFuture().sync();
         }
         finally
@@ -77,47 +79,25 @@ public class GateClient
         return channel;
     }
 
-    public static void start(final String serverName, final String host, final int port, final GateMonitor monitor)
+    public static void start(ServerConfigVo srvCfg, final GateMonitor monitor)
     {
         new Thread(new Runnable()
         {
-            int clientNum = 1;
             @Override
             public void run()
             {
-                while(true)
-                {
-                    if(clientNum > 1)
-                        logger.info("网关客户端重新连接服务器:" + serverName + " " + clientNum++);
-                    GateClient client = null;
-                    try
-                    {
-                        client = new GateClient( host, port, monitor, serverName);
-                        client.run();
-                    }
-                    catch (Exception e)
-                    {
-                        e.printStackTrace();
-                    }
-                    while (client != null && !client.isDead)
-                    {
-                        logger.info("wait dead ");
-                        WaitForSecond();
-                    }
-                    WaitForSecond();
-                }
-            }
-            private void WaitForSecond()
-            {
+                logger.info("Gate_Client连接服务器:" + srvCfg.getName());
+                GateClient client = null;
                 try
                 {
-                    Thread.sleep(10000);
+                    client = new GateClient( srvCfg, monitor);
+                    client.run();
                 }
-                catch (InterruptedException e)
+                catch (Exception e)
                 {
                     e.printStackTrace();
                 }
             }
-        }, "Gate_Client-->" + serverName).start();
+        }, "Gate_Client-->" + srvCfg.getName()).start();
     }
 }

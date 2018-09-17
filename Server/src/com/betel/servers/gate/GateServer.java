@@ -2,6 +2,8 @@ package com.betel.servers.gate;
 
 import com.betel.common.BaseServer;
 import com.betel.common.Debug;
+import com.betel.config.ServerConfig;
+import com.betel.config.ServerConfigVo;
 import com.betel.consts.ServerName;
 import com.betel.servers.balance.BalanceServer;
 import io.netty.bootstrap.ServerBootstrap;
@@ -26,9 +28,9 @@ public class GateServer extends BaseServer
 {
     public static final String ServerName = "GateServer";
 
-    public GateServer(int port)
+    public GateServer()
     {
-        super(ServerName, port);
+        super(ServerName);
     }
 
     @Override
@@ -55,10 +57,11 @@ public class GateServer extends BaseServer
                     .childOption(ChannelOption.SO_KEEPALIVE, true);
 
             logger.info(ServerName + " startup successful!!!");
-            ChannelFuture f = b.bind(port).sync();
+            ChannelFuture f = b.bind(srvCfg.getPort()).sync();
 
             //网关客户端连接均衡服务器
-            GateClient.start(com.betel.consts.ServerName.BALANCE_SERVER,"",8081,monitor);
+            ServerConfigVo balanceServer = ServerConfig.getServerConfig(com.betel.consts.ServerName.BALANCE_SERVER);
+            GateClient.start(balanceServer,monitor);
 
             //logger.info("Try to bootstrap balance server...");
             //BalanceServer bs = new BalanceServer(8081);
@@ -78,15 +81,6 @@ public class GateServer extends BaseServer
     public static void main(String[] args) throws Exception
     {
         Debug.initLog("[" + ServerName + "]", "log4j_gate_server.properties");
-        int port;
-        if (args.length > 0)
-        {
-            port = Integer.parseInt(args[0]);
-        }
-        else
-        {
-            port = 8080;
-        }
-        new GateServer(port).run();
+        new GateServer().run();
     }
 }

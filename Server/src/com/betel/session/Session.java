@@ -35,7 +35,8 @@ public class Session
         this.state = SessionState.Success;
         this.status = SessionStatus.Free;
 
-        this.param = new ParamParser(recvJson);
+        if(recvJson.containsKey("data"))
+            this.param = new ParamParser(recvJson);
         this.channelId = recvJson.getString(FieldName.CHANNEL_ID);
         this.rqstAction = recvJson.getString(Action.NAME);
     }

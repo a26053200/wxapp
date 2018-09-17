@@ -1,5 +1,6 @@
 package com.betel.servers.business;
 
+import com.betel.config.ServerConfigVo;
 import com.betel.servers.business.BusinessMonitor;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -30,12 +31,12 @@ public class BusinessClient
 
     public boolean isDead = true;
 
-    public BusinessClient(String host, int port, BusinessMonitor monitor, String serverName)
+    public BusinessClient(ServerConfigVo srvCfg, BusinessMonitor monitor)
     {
-        this.host = host;
-        this.port = port;
+        this.host = srvCfg.getHost();
+        this.port = srvCfg.getPort();
         this.monitor = monitor;
-        this.serverName = serverName;
+        this.serverName = srvCfg.getName();
     }
 
     public void run() throws Exception
@@ -72,22 +73,24 @@ public class BusinessClient
             logger.info("BusinessClient disconnect from " + this.serverName);
         }
     }
+
     public Channel GetChanel()
     {
         return channel;
     }
-    public static void start(final String serverName, final String host, final int port, final BusinessMonitor monitor)
+
+    public static void start(final ServerConfigVo srvCfg, final BusinessMonitor monitor)
     {
         new Thread(new Runnable()
         {
             @Override
             public void run()
             {
-                logger.info("业务服务器客户端连接服务器:" + serverName);
+                logger.info("Business_Client连接服务器:" + srvCfg.getName());
                 BusinessClient client = null;
                 try
                 {
-                    client = new BusinessClient(host, port, monitor, serverName);
+                    client = new BusinessClient(srvCfg, monitor);
                     client.run();
                 }
                 catch (Exception e)
@@ -95,6 +98,6 @@ public class BusinessClient
                     e.printStackTrace();
                 }
             }
-        }, "BusinessClient --> " + serverName).start();
+        }, "Business_Client --> " + srvCfg.getName()).start();
     }
 }

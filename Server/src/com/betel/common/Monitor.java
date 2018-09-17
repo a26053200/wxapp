@@ -65,6 +65,13 @@ public abstract class Monitor
         return ctx;
     }
 
+    public void delContext(ChannelHandlerContext ctx)
+    {
+        String chId = ctx.channel().id().asLongText();
+        if(contextMap.containsKey(chId))
+            contextMap.remove(chId,ctx);
+    }
+
     public Monitor()
     {
         //所有已经链接的通道,用于广播
@@ -74,7 +81,7 @@ public abstract class Monitor
         //初始化数据库
         initDB();
     }
-
+    // 接收客户端发来的字节,然后转换为json
     public void recvByteBuf(ChannelHandlerContext ctx, ByteBuf buf)
     {
         int msgLen = buf.readableBytes();
@@ -92,6 +99,18 @@ public abstract class Monitor
         {
             ex.printStackTrace();
         }
+    }
+    // 接收服务器直接的直接,直接可以转化为json
+    public void recvJsonBuff(ChannelHandlerContext ctx, ByteBuf buf)
+    {
+        String json = BytesUtils.readString(buf);
+        //不知道为什么 以后查
+        if(!json.startsWith("{"))
+        {
+            logger.info("Receive json buff 首字符异常:" + json);
+            json = json.substring(1);//当收到json
+        }
+        recvJson(ctx,json);
     }
 
     public void recvJson(ChannelHandlerContext ctx, String json)
@@ -121,11 +140,7 @@ public abstract class Monitor
             ex.printStackTrace();
         }
     }
-    public void recvJsonBuff(ChannelHandlerContext ctx, ByteBuf buf)
-    {
-        String json = BytesUtils.readString(buf);
-        recvJson(ctx,json);
-    }
+
 
     public SubMonitor getSubMonitor(String mntName)
     {

@@ -3,7 +3,7 @@ package com.betel.utils;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
-import com.betel.consts.ServerConfig;
+import com.betel.consts.ServerConsts;
 import io.netty.buffer.ByteBuf;
 
 /**
@@ -29,7 +29,7 @@ public class BytesUtils
     }
     public static String readString(byte[] bytes)
     {
-        String res = new String(bytes, Charset.forName(ServerConfig.CHARSET_UTF_8));
+        String res = new String(bytes, Charset.forName(ServerConsts.CHARSET_UTF_8));
         return res.trim();
     }
     public static byte[] string2Bytes(String str)
@@ -38,7 +38,7 @@ public class BytesUtils
         byte[] bytes = null;
         try
         {
-            bytes = str.getBytes(ServerConfig.CHARSET_UTF_8);
+            bytes = str.getBytes(ServerConsts.CHARSET_UTF_8);
         }
         catch (UnsupportedEncodingException e)
         {
@@ -52,7 +52,7 @@ public class BytesUtils
         byte[] bytes = new byte[length];
         try
         {
-            byte[] byteStr = str.getBytes(ServerConfig.CHARSET_UTF_8);
+            byte[] byteStr = str.getBytes(ServerConsts.CHARSET_UTF_8);
             System.arraycopy(byteStr, 0, bytes, 0, byteStr.length);
         }
         catch (UnsupportedEncodingException e)

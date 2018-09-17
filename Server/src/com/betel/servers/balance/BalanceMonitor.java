@@ -24,8 +24,15 @@ public class BalanceMonitor extends Monitor
     {
     }//负载均衡目前不需要数据库
 
+    // 网关服务器上下文
+    private ChannelHandlerContext gateServerContext;
     // 业务服务器上下文
     private ChannelHandlerContext businessServerContext;
+    // 网关服务器上下文
+    public ChannelHandlerContext getGateServerContext()
+    {
+        return businessServerContext;
+    }
     // 业务服务器上下文
     public ChannelHandlerContext getBusinessServerContext()
     {
@@ -39,19 +46,26 @@ public class BalanceMonitor extends Monitor
         {
             // 核心业务服务器
             case ServerName.BUSINESS_SERVER:
-            {
-
-            }
-            break;
+                forward2BusinessServer(jsonObject);
+                break;
+            // 网关服务器
+            case ServerName.GATE_SERVER:
+                jsonObject.put(FieldName.SERVER,ServerName.CLIENT);
+                forward2GateServer(jsonObject);
+                break;
             //均衡服务器的消息直接处理
             case ServerName.BALANCE_SERVER:
             {
                 String action = jsonObject.getString(Action.NAME);
                 switch (action)
                 {
+                    case Action.HANDSHAKE_GATE2BALANCE://网关服务器和均衡服务器握手成功
+                        gateServerContext = ctx;
+                        logger.info("The gate server and balance server handshake successfully!");
+                        break;
                     case Action.HANDSHAKE_BUSINESS2BALANCE://业务服务器和均衡服务器握手成功
                         businessServerContext = ctx;
-                        logger.info("The business server and balance server shook hands successfully.");
+                        logger.info("The business server and balance server handshake successfully!");
                         break;
                 }
             }
@@ -60,7 +74,14 @@ public class BalanceMonitor extends Monitor
     }
 
     // 转发给
-    private void forward2businessServer(JSONObject jsonObject)
+    private void forward2GateServer(JSONObject jsonObject)
+    {
+        byte[] bytes = BytesUtils.string2Bytes(jsonObject.toString());
+        gateServerContext.channel().writeAndFlush(bytes);
+    }
+
+    // 转发给
+    private void forward2BusinessServer(JSONObject jsonObject)
     {
         byte[] bytes = BytesUtils.string2Bytes(jsonObject.toString());
         businessServerContext.channel().writeAndFlush(bytes);
