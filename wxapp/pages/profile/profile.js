@@ -1,5 +1,6 @@
 // pages/profile/profile.js
 var JsonUtils = require('../../utils/JsonUtils.js')
+var util = require('../../utils/util.js')
 var net = require('../../utils/net.js')
 //获取应用实例
 const app = getApp()
@@ -14,7 +15,9 @@ Page({
     hasUserInfo: false,
     canIUse: wx.canIUse('button.open-type.getUserInfo')
   },
-
+  onLoad: function () {
+    
+  },
   onLoad: function() {
     if (app.globalData.userInfo) {
       this.setData({
@@ -44,41 +47,59 @@ Page({
     }
   },
 
-  //登陆微信接口服务器
   bindLoginWeixinServer: function() {
-    wx.login({
+    var _this = this;
+    // 先探测服务器是否正常开启
+    net.sendData({
+      action: "Buyer@mp_probe",
+    }, function(res) {
+      //console.log(res);
+      if (res.data.probe_state) {
+        console.log("服务器正常运行");
+        _this.doLoginWeixinServer();
+      } else {
+        console.log("服务器正在维护");
+      }
+    })
+  },
+
+  //登陆微信接口服务器
+  doLoginWeixinServer: function() {
+    wx.login({// ------ 获取凭证 ------
       success: res => {
-        // ------ 获取凭证 ------
         var code = res.code;
         if (code) {
-          // console.log('获取用户登录凭证：' + code);
-          // ------ 发送凭证 ------
           //买家请求服务器登陆微信接口服务器
           var data = {
-            action: "buyer@mp_login_wx_server",
-            data: code
+            action: "Buyer@mp_login_wx_server",
+            code: code
           }
           net.sendData(data, function(res) {
-            console.log(res.data)
-          })
-          wx.request({
-            url: '后台通过获取前端传的code返回openid的接口地址',
-            data: {
-              code: code
-            },
-            method: 'POST',
-            header: {
-              'content-type': 'application/json'
-            },
-            success: function(res) {
-              if (res.statusCode == 200) {
-                // console.log("获取到的openid为：" + res.data)
-                // that.globalData.openid = res.data
-                wx.setStorageSync('openid', res.data)
-              } else {
-                console.log(res.errMsg)
+            if (res.errcode == null || res.errcode == undefined)
+            {//成功获取
+              // console.log("获取到的openid为：" + res.data)
+              // that.globalData.openid = res.data
+              //wx.setStorageSync('openid', res)
+            }else{
+              //"errcode": 40029, "errmsg": "invalid code"
+              switch (errcode)
+              {
+                case -1:
+                  util.showTips("系统繁忙，此时请开发者稍候再试");
+                  break;
+                case 0:
+                  util.showTips("请求成功");
+                  break;
+                case 40029:
+                  util.showTips("code 无效");
+                  break;
+                case 45011:
+                  util.showTips("频率限制，每个用户每分钟100次");
+                  break;
+                default:
+                  break;
               }
-            },
+            }
           })
         } else {
           console.log('获取用户登录失败：' + res.errMsg);

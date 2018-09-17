@@ -11,9 +11,13 @@ function sendData(data, callback, failCallback) {
     },
     method: 'POST',
     success: function (res) {
-      console.log("[rspd]" + res.data)
       if (callback != null && callback != undefined)
-        callback(res.data);
+      {
+        var jsonStr = res.data.substring(0, res.data.length - 1)//去掉最后一位空字符
+        console.log("[rspd]" + jsonStr)
+        var json = JSON.parse(jsonStr)
+        callback(json);
+      }
     },
     fail:function(){
       if (failCallback != null && failCallback != undefined)
