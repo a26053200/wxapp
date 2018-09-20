@@ -13,50 +13,73 @@ Page({
   data: {
     userInfo: {},
     hasUserInfo: false,
-    canIUse: wx.canIUse('button.open-type.getUserInfo')
+    canIUse: wx.canIUse('button.open-type.getUserInfo'),
+    isGetingBuyerInfo: false
   },
-  onLoad: function () {
-    
-  },
+
   onLoad: function() {
+    var _this = this
     if (app.globalData.userInfo) {
-      this.setData({
-        userInfo: app.globalData.userInfo,
-        hasUserInfo: true
-      })
+      this.onUserInfo(app.globalData.userInfo)
     } else if (this.data.canIUse) {
       // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
       // 所以此处加入 callback 以防止这种情况
       app.userInfoReadyCallback = res => {
-        this.setData({
-          userInfo: res.userInfo,
-          hasUserInfo: true
-        })
+        _this.onUserInfo(res.userInfo)
       }
     } else {
       // 在没有 open-type=getUserInfo 版本的兼容处理
       wx.getUserInfo({
         success: res => {
           app.globalData.userInfo = res.userInfo
-          this.setData({
-            userInfo: res.userInfo,
-            hasUserInfo: true
-          })
+          _this.onUserInfo(res.userInfo)
         }
       })
     }
   },
 
-  bindLoginWeixinServer: function() {
+  getUserInfo: function(e) {
+    app.globalData.userInfo = e.detail.userInfo
+    onUserInfo(e.detail.userInfo)
+  },
+
+  onUserInfo: function(userInfo) {
+    console.log("获取微信用户信息" + userInfo.nickName);
+    this.setData({
+      userInfo: userInfo,
+      hasUserInfo: true
+    })
+    this.probeServer();
+  },
+  /**
+    * 生命周期函数--监听页面显示
+    */
+  onShow: function () {
+    this.probeServer();
+  },
+  /**
+  * 生命周期函数--监听页面隐藏
+  */
+  onHide: function () {
+    this.data.isGetingBuyerInfo = false;
+  },
+  // 探测服务器状态
+  probeServer: function() {
     var _this = this;
+    if (this.data.isGetingBuyerInfo)
+    {
+      return
+    }else{
+      this.data.isGetingBuyerInfo = true;
+    }
     // 先探测服务器是否正常开启
     net.sendData({
-      action: "Buyer@mp_probe",
+      action: "buyer@mp_probe"
     }, function(res) {
       //console.log(res);
       if (res.data.probe_state) {
         console.log("服务器正常运行");
-        _this.doLoginWeixinServer();
+        _this.loginWeixinServer();
       } else {
         console.log("服务器正在维护");
       }
@@ -64,26 +87,24 @@ Page({
   },
 
   //登陆微信接口服务器
-  doLoginWeixinServer: function() {
-    wx.login({// ------ 获取凭证 ------
+  loginWeixinServer: function() {
+    var _this = this;
+    wx.login({ // ------ 获取凭证 ------
       success: res => {
         var code = res.code;
         if (code) {
           //买家请求服务器登陆微信接口服务器
           var data = {
-            action: "Buyer@mp_login_wx_server",
-            code: code
+            action: "buyer@mp_login_wx_server",
+            code: code,
+            wxUserInfo: _this.data.userInfo
           }
           net.sendData(data, function(res) {
-            if (res.errcode == null || res.errcode == undefined)
-            {//成功获取
-              // console.log("获取到的openid为：" + res.data)
-              // that.globalData.openid = res.data
-              //wx.setStorageSync('openid', res)
-            }else{
+            if (res.errcode == null || res.errcode == undefined) { //成功获取,服务器返回买家信息
+              _this.onBuyerInfo();
+            } else {
               //"errcode": 40029, "errmsg": "invalid code"
-              switch (errcode)
-              {
+              switch (errcode) {
                 case -1:
                   util.showTips("系统繁忙，此时请开发者稍候再试");
                   break;
@@ -107,24 +128,9 @@ Page({
       }
     })
   },
-  //获取个人信息
-  bindGetProfileInfo: function() {
-    var data = {
-      action: "mp_get_profile",
-      userNicknam: app.globalData.userInfo.nickName
-    }
-    net.sendData(data, function(res) {
-      //console.log(res.data)
-    })
-  },
 
-  getUserInfo: function(e) {
-    console.log(e)
-    app.globalData.userInfo = e.detail.userInfo
-    this.setData({
-      userInfo: e.detail.userInfo,
-      hasUserInfo: true
-    })
+  onBuyerInfo: function(){
+    this.data.isGetingBuyerInfo = false;
   }
 
 })
