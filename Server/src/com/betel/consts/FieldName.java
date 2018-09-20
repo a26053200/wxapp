@@ -23,8 +23,7 @@ public class FieldName
 
     public static final String PROBE_MSG = "probe_msg"; //探测
 
-    /**  登陆微信接口服务器  **/
-    public static final String WX_API_SESSION_KEY = "wx_api_session_key";
+    /**  买家  **/
+    public static final String BUYER_INFO = "buyer_info";
 
-    public static final String WX_API_OPEN_ID = "wx_api_openid";
 }

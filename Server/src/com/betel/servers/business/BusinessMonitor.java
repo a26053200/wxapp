@@ -64,6 +64,9 @@ public class BusinessMonitor extends Monitor
         if (subMnt != null)
             subMnt.ActionHandler(ctx, jsonObject, subAction);
         else
+        {
             logger.error("There is no monitor for action:" + action);
+        }
+
     }
 }

@@ -26,23 +26,17 @@ public abstract class BaseVo
     }
     public BaseVo(String key)
     {
-
+        primaryKey = key;
     }
     public String getPrimaryKey()
     {
         return primaryKey;
     }
 
-    public void setPrimaryKey(String primaryKey)
-    {
-        this.primaryKey = primaryKey;
-    }
-
     public boolean isEmpty()
     {
         return isEmpty;
     }
-
 
 
     public abstract JSONObject toJson();

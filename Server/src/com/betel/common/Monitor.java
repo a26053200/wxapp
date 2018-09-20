@@ -105,11 +105,12 @@ public abstract class Monitor
     {
         String json = BytesUtils.readString(buf);
         //不知道为什么 以后查
-        if(!json.startsWith("{"))
+        while(!json.startsWith("{"))
         {
             logger.info("Receive json buff 首字符异常:" + json);
             json = json.substring(1);//当收到json
         }
+        logger.info(String.format("[recv] json:%s",  json));
         recvJson(ctx,json);
     }
 

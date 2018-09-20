@@ -11,10 +11,10 @@ public class ModuleName
     /**
      * 买家
      */
-    public final static String BUYER = "Buyer";
+    public final static String BUYER = "buyer";
 
     /**
      * 商品
      */
-    public final static String PRODUCT = "Product";
+    public final static String PRODUCT = "product";
 }
