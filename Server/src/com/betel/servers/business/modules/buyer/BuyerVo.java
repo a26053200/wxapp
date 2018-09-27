@@ -105,7 +105,7 @@ public class BuyerVo extends BaseVo implements IDataBaseVo
         this.wxLanguage     = wxUserInfo.getString("language");
         this.wxCity         = wxUserInfo.getString("city");
         this.wxProvince     = wxUserInfo.getString("province");
-        this.wxCountry     = wxUserInfo.getString("country");
+        this.wxCountry      = wxUserInfo.getString("country");
         this.wxAvatarUrl    = wxUserInfo.getString("avatarUrl");
     }
 
