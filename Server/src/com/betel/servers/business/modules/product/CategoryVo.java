@@ -6,12 +6,12 @@ import com.betel.common.interfaces.IDataBaseVo;
 import redis.clients.jedis.Jedis;
 
 /**
- * @ClassName: ProductVo
+ * @ClassName: 商品分类信息
  * @Description: TODO
  * @Author: zhengnan
- * @Date: 2018/9/12 0:18
+ * @Date: 2018/11/7 22:55
  */
-public class ProductVo extends BaseVo implements IDataBaseVo
+public class CategoryVo extends BaseVo implements IDataBaseVo
 {
     private final static String ID = "id";
 

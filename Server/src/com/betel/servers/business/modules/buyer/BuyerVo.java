@@ -15,23 +15,13 @@ import redis.clients.jedis.Jedis;
 public class BuyerVo extends BaseVo implements IDataBaseVo
 {
     private String id;
-    private String openId;
-    private String unionId;
+    private String profileId;
     private String registerTime;    //买家第一次登陆游戏时间,即买家在该服务器的注册时间
 
-    // 微信用户信息
-    private String wxNickName;
-    private String wxGender;
-    private String wxLanguage;
-    private String wxCity;
-    private String wxProvince;
-    private String wxCountry;
-    private String wxAvatarUrl;
-
-    public BuyerVo(String openId)
+    public BuyerVo(String profileId)
     {
-        super(RedisKeys.buyer + ":" + openId);
-        this.openId = openId;
+        super(RedisKeys.buyer + ":" + profileId);
+        this.profileId = profileId;
     }
     public String getId()
     {
@@ -43,19 +33,14 @@ public class BuyerVo extends BaseVo implements IDataBaseVo
         this.id = id;
     }
 
-    public String getOpenId()
+    public String getProfileId()
     {
-        return openId;
+        return profileId;
     }
 
-    public String getUnionId()
+    public void setProfileId(String profileId)
     {
-        return unionId;
-    }
-
-    public void setUnionId(String unionId)
-    {
-        this.unionId = unionId;
+        this.profileId = profileId;
     }
 
     public String getRegisterTime()
@@ -68,47 +53,6 @@ public class BuyerVo extends BaseVo implements IDataBaseVo
         this.registerTime = registerTime;
     }
 
-    public String getWxNickName()
-    {
-        return wxNickName;
-    }
-
-    public String getWxGender()
-    {
-        return wxGender;
-    }
-
-    public String getWxLanguage()
-    {
-        return wxLanguage;
-    }
-
-    public String getWxCity()
-    {
-        return wxCity;
-    }
-
-    public String getWxProvince()
-    {
-        return wxProvince;
-    }
-
-    public String getWxAvatarUrl()
-    {
-        return wxAvatarUrl;
-    }
-
-    public void setWxUserInfo(JSONObject wxUserInfo)
-    {
-        this.wxNickName     = wxUserInfo.getString("nickName");
-        this.wxGender       = wxUserInfo.getString("gender");
-        this.wxLanguage     = wxUserInfo.getString("language");
-        this.wxCity         = wxUserInfo.getString("city");
-        this.wxProvince     = wxUserInfo.getString("province");
-        this.wxCountry      = wxUserInfo.getString("country");
-        this.wxAvatarUrl    = wxUserInfo.getString("avatarUrl");
-    }
-
     @Override
     public void fromDB(Jedis db)
     {
@@ -118,8 +62,7 @@ public class BuyerVo extends BaseVo implements IDataBaseVo
         else
         {
             id              = db.hget(primaryKey, RedisKeys.buyer_id);
-            openId          = db.hget(primaryKey, RedisKeys.buyer_open_id);
-            unionId         = db.hget(primaryKey, RedisKeys.buyer_union_id);
+            profileId          = db.hget(primaryKey, RedisKeys.buyer_profile_id);
             registerTime    = db.hget(primaryKey, RedisKeys.buyer_register_time);
         }
     }
@@ -129,19 +72,8 @@ public class BuyerVo extends BaseVo implements IDataBaseVo
     {
         isEmpty = false;
         db.hset(primaryKey, RedisKeys.buyer_id,             id);
-        db.hset(primaryKey, RedisKeys.buyer_open_id,        openId);
+        db.hset(primaryKey, RedisKeys.buyer_profile_id,     profileId);
         db.hset(primaryKey, RedisKeys.buyer_register_time,  registerTime);
-
-        db.hset(primaryKey, RedisKeys.buyer_wx_nickname,    wxNickName);
-        db.hset(primaryKey, RedisKeys.buyer_wx_gender,      wxGender);
-        db.hset(primaryKey, RedisKeys.buyer_wx_language,    wxLanguage);
-        db.hset(primaryKey, RedisKeys.buyer_wx_city,        wxCity);
-        db.hset(primaryKey, RedisKeys.buyer_wx_province,    wxProvince);
-        db.hset(primaryKey, RedisKeys.buyer_wx_country,     wxCountry);
-        db.hset(primaryKey, RedisKeys.buyer_wx_avatar_url,  wxAvatarUrl);
-
-        if(unionId != null)
-            db.hset(primaryKey, RedisKeys.buyer_union_id,       unionId);
     }
 
     @Override
@@ -149,7 +81,7 @@ public class BuyerVo extends BaseVo implements IDataBaseVo
     {
         JSONObject json = new JSONObject();
         json.put(RedisKeys.buyer_id, id);
-        json.put(RedisKeys.buyer_open_id, openId);
+        json.put(RedisKeys.buyer_profile_id, profileId);
         return json;
     }
 }

@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import redis.clients.jedis.Jedis;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * @ClassName: Monitor
@@ -80,6 +81,15 @@ public abstract class Monitor
         subMonitorMap = new HashMap<>();
         //初始化数据库
         initDB();
+    }
+
+    public void InitSubMonitors()
+    {
+        Iterator iterator = subMonitorMap.keySet().iterator();
+        while (iterator.hasNext()) {
+            Object key = iterator.next();
+            subMonitorMap.get(key).Init();
+        }
     }
     // 接收客户端发来的字节,然后转换为json
     public void recvByteBuf(ChannelHandlerContext ctx, ByteBuf buf)

@@ -9,6 +9,16 @@ package com.betel.consts;
 public class ModuleName
 {
     /**
+     * 用户
+     */
+    public final static String PROFILE = "profile";
+
+    /**
+     * 记录
+     */
+    public final static String RECORD = "record";
+
+    /**
      * 买家
      */
     public final static String BUYER = "buyer";

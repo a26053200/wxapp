@@ -10,6 +10,8 @@ import com.betel.consts.ServerName;
 import com.betel.database.RedisClient;
 import com.betel.servers.business.modules.buyer.BuyerMnt;
 import com.betel.servers.business.modules.product.ProductMnt;
+import com.betel.servers.business.modules.profile.ProfileMnt;
+import com.betel.servers.business.modules.record.RecordMnt;
 import com.betel.utils.BytesUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -30,8 +32,12 @@ public class BusinessMonitor extends Monitor
     public BusinessMonitor()
     {
         super();
+        subMonitorMap.put(ModuleName.PROFILE, new ProfileMnt(this));
+        subMonitorMap.put(ModuleName.RECORD, new RecordMnt(this));
         subMonitorMap.put(ModuleName.BUYER, new BuyerMnt(this));
         subMonitorMap.put(ModuleName.PRODUCT, new ProductMnt(this));
+
+
     }
     public void SetGameServerClient(BusinessClient businessServerClient)
     {

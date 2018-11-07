@@ -5,7 +5,10 @@ import com.betel.common.Monitor;
 import com.betel.common.SubMonitor;
 import com.betel.consts.Action;
 import com.betel.consts.FieldName;
-import com.betel.servers.business.modules.record.LoginRecordVo;
+import com.betel.consts.ModuleName;
+import com.betel.servers.business.modules.profile.ProfileMnt;
+import com.betel.servers.business.modules.profile.ProfileVo;
+import com.betel.servers.business.modules.record.RecordVo;
 import com.betel.session.Session;
 import com.betel.utils.HttpRequest;
 import com.betel.utils.IdGenerator;
@@ -72,52 +75,61 @@ public class BuyerMnt extends SubMonitor
         rspdClient(session, sendJson);
     }
 
+    // 微信用户登录
     private void login_wx_server(Session session)
     {
         String nowTime = TimeUtils.date2String(new Date());
         String channelId = session.getChannelId();
         String code = session.getRecvJson().getString("code");
+
+        //请求微信登录接口服务器返回OpenId 和 UnionId
         String wxApiRspd = HttpRequest.sendPost(WX_LOGIN_URL, String.format(WX_LOGIN_PARAM, APP_ID, APP_SECRET, code));
         //"openid":"oqZlN5Qw3-Ch1WqidzgW9DX5uGg0","session_key":"8bKQ0+2Seux3Ce6yEs5BNw=="
         logger.info(wxApiRspd);
-        // 买家信息
-        JSONObject buyerInfoJson = JSONObject.parseObject(wxApiRspd);
-        String errcode = buyerInfoJson.getString("errcode");
+
+        // 用户信息
+        JSONObject profileInfoJson = JSONObject.parseObject(wxApiRspd);
+        String errcode = profileInfoJson.getString("errcode");
         if (StringUtils.isNullOrEmpty(errcode))
         {
-            String openid = buyerInfoJson.getString("openid");
-            BuyerVo buyer = getBuyerInfo(channelId);
-            if (buyer == null)
+            String openid = profileInfoJson.getString("openid");
+            ProfileVo profile = profileMnt.getProfileInfo(channelId);
+            if (profile == null)
             {
-                buyer = new BuyerVo(openid);
-                buyer.fromDB(db);
-                String unionId = buyerInfoJson.getString("unionId");
+                profile = new ProfileVo(openid);
+                profile.fromDB(db);
+                String unionId = profileInfoJson.getString("unionId");
                 if (!StringUtils.isNullOrEmpty(unionId))
                 {
-                    buyer.setUnionId(unionId);
+                    profile.setUnionId(unionId);
                 }
-                buyerMap.put(channelId, buyer);
+                profileMnt.addProfileInfo(channelId, profile);
             }
-            if (buyer.isEmpty())
+            if (profile.isEmpty())
             {//买家第一次登陆
                 long playerId = IdGenerator.getInstance().nextId();//生成玩家Id
-                buyer.setId(Long.toString(playerId));
-                buyer.setRegisterTime(nowTime);
+                profile.setId(Long.toString(playerId));
+                profile.setRegisterTime(nowTime);
             }
-            addLoginRecord(buyer);
-            buyer.setWxUserInfo(session.getRecvJson().getJSONObject("wxUserInfo"));
-            buyer.writeDB(db);
-            buyerInfoJson.put(FieldName.BUYER_INFO, buyer.toJson());
+            //recordMnt.addLoginRecord();
+            //addLoginRecord(profile);
+            profile.setWxUserInfo(session.getRecvJson().getJSONObject("wxUserInfo"));
+            profile.writeDB(db);
+            profileInfoJson.put(FieldName.BUYER_INFO, profile.toJson());
         }
-        rspdClient(session, buyerInfoJson);
+        rspdClient(session, profileInfoJson);
+
+        // 买家信息
+
+
     }
 
     private void addLoginRecord(BuyerVo buyer)
     {
         // 添加一次登陆记录
         long recordId = IdGenerator.getInstance().nextId();//生成玩家Id
-        LoginRecordVo loginRecord = new LoginRecordVo(buyer.getId(), Long.toString(recordId));
-        loginRecord.setLoginTime(TimeUtils.date2String(new Date()));
+        RecordVo loginRecord = new RecordVo(buyer.getId(), Long.toString(recordId));
+        loginRecord.setAddTime(TimeUtils.date2String(new Date()));
         loginRecord.writeDB(db);
     }
 

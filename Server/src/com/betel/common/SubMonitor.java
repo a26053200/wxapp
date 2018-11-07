@@ -3,7 +3,10 @@ package com.betel.common;
 import com.alibaba.fastjson.JSONObject;
 import com.betel.consts.Action;
 import com.betel.consts.FieldName;
+import com.betel.consts.ModuleName;
 import com.betel.consts.ServerName;
+import com.betel.servers.business.modules.profile.ProfileMnt;
+import com.betel.servers.business.modules.record.RecordMnt;
 import com.betel.session.Session;
 import com.betel.utils.BytesUtils;
 import io.netty.channel.ChannelHandlerContext;
@@ -17,14 +20,23 @@ import redis.clients.jedis.Jedis;
  */
 public abstract class SubMonitor
 {
-    protected Monitor base;
+    protected Monitor monitor;
+
+    protected ProfileMnt profileMnt;
+    protected RecordMnt recordMnt;
 
     protected Jedis db;
 
-    public SubMonitor(Monitor base)
+    public SubMonitor(Monitor monitor)
     {
-        this.base = base;
-        this.db = base.db;
+        this.monitor = monitor;
+        this.db = monitor.db;
+    }
+
+    public void Init()
+    {
+        profileMnt = (ProfileMnt)monitor.getSubMonitor(ModuleName.PROFILE);
+        recordMnt = (RecordMnt)monitor.getSubMonitor(ModuleName.RECORD);
     }
 
     public abstract void ActionHandler(ChannelHandlerContext ctx, JSONObject jsonObject, String subAction);
