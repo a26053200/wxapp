@@ -62,7 +62,7 @@ public class BuyerVo extends BaseVo implements IDataBaseVo
         else
         {
             id              = db.hget(primaryKey, RedisKeys.buyer_id);
-            profileId          = db.hget(primaryKey, RedisKeys.buyer_profile_id);
+            profileId       = db.hget(primaryKey, RedisKeys.buyer_profile_id);
             registerTime    = db.hget(primaryKey, RedisKeys.buyer_register_time);
         }
     }

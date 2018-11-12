@@ -24,22 +24,23 @@ public class RecordMnt extends SubMonitor
     }
 
     @Override
-    public void Init()
-    {
-
-    }
-
-    @Override
     public void ActionHandler(ChannelHandlerContext ctx, JSONObject jsonObject, String subAction)
     {
 
     }
-    public RecordVo addLoginRecord(BuyerVo buyer)
+
+    /**
+     * 记录买家登录
+     * @param buyer 买家
+     * @return
+     */
+    public RecordVo addBuyerLoginRecord(BuyerVo buyer)
     {
         // 添加一次登陆记录
         long recordId = IdGenerator.getInstance().nextId();//生成玩家Id
         RecordVo loginRecord = new RecordVo(buyer.getId(), Long.toString(recordId));
         loginRecord.setType("Login");
+        loginRecord.setContent("微信买家登录");
         loginRecord.setAddTime(TimeUtils.date2String(new Date()));
         loginRecord.writeDB(db);
         return loginRecord;

@@ -1,6 +1,7 @@
 package com.betel.servers.balance;
 
 import com.betel.common.Monitor;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -14,7 +15,7 @@ import org.apache.log4j.Logger;
  * @Author: zhengnan
  * @Date: 2018/9/9 0:33
  */
-public class BalanceServerHandler extends SimpleChannelInboundHandler<Monitor>
+public class BalanceServerHandler extends SimpleChannelInboundHandler<ByteBuf>
 {
     final static Logger logger = Logger.getLogger(BalanceServerHandler.class.getName());
 
@@ -37,10 +38,11 @@ public class BalanceServerHandler extends SimpleChannelInboundHandler<Monitor>
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, Monitor monitor) throws Exception
+    protected void channelRead0(ChannelHandlerContext ctx, ByteBuf buf) throws Exception
     {
         Channel incoming = ctx.channel();
-        logger.info("Channel:" + incoming.id());
+        logger.info("收到数据长度:" + buf.readableBytes());
+        monitor.recvByteBuf(ctx,buf);
     }
 
     @Override

@@ -6,9 +6,7 @@ import com.betel.consts.Action;
 import com.betel.consts.FieldName;
 import com.betel.consts.ServerName;
 import com.betel.servers.balance.BalanceServer;
-import com.betel.servers.business.BusinessClient;
 import com.betel.utils.BytesUtils;
-import com.betel.utils.StringUtils;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -37,6 +35,7 @@ public class GateMonitor extends Monitor
     {
         super();
     }
+
     private BalanceServer balanceServer;
 
     private GateClient gateClient;
@@ -45,6 +44,7 @@ public class GateMonitor extends Monitor
     {
         this.balanceServer = balanceServer;
     }
+
     public void SetGateServerClient(GateClient gateClient)
     {
         this.gateClient = gateClient;
@@ -60,7 +60,9 @@ public class GateMonitor extends Monitor
     }
 
     @Override
-    protected void initDB(){ }//网关服务器不需要数据库
+    protected void initDB()
+    {
+    }//网关服务器不需要数据库
 
     @Override
     protected void RespondJson(ChannelHandlerContext ctx, JSONObject jsonObject)
@@ -75,34 +77,50 @@ public class GateMonitor extends Monitor
                 forward2BalanceServer(jsonObject);
                 break;
             // 转发给客户端
-            case ServerName.CLIENT:
-                String channelId = jsonObject.getString(FieldName.CHANNEL_ID);
-                jsonObject.remove(FieldName.CHANNEL_ID);
-                jsonObject.remove(FieldName.SERVER);
-                ChannelHandlerContext clientCtx = getContext(channelId);
-                if (clientCtx != null)
-                {
-                    httpResponse(clientCtx, jsonObject.toString());
-                    delContext(clientCtx);
-                }
-                else
-                    logger.info("Client has not ChannelHandlerContext");
+            case ServerName.GATE_SERVER:
+                String forwardServer = jsonObject.get(FieldName.FORWARD_SERVER).toString();
+                forward2Client(jsonObject,forwardServer);
                 break;
             default:
-                httpResponse(ctx,"该请求未知服务器");
+                httpResponse(ctx, "该请求未知服务器",false);
                 break;
         }
     }
 
-    //直接响应客户端
-    private void httpResponse(ChannelHandlerContext ctx, String msg)
+    private void forward2Client(JSONObject jsonObject, String client)
+    {
+        String channelId = jsonObject.getString(FieldName.CHANNEL_ID);
+        jsonObject.remove(FieldName.CHANNEL_ID);
+        jsonObject.remove(FieldName.SERVER);
+        ChannelHandlerContext clientCtx = getContext(channelId);
+        if (clientCtx != null)
+        {
+            httpResponse(clientCtx, jsonObject.toString(),client == ServerName.CLIENT_MP);
+            delContext(clientCtx);
+        }
+        else
+            logger.info("Client has not ChannelHandlerContext");
+    }
+
+
+    /**
+     * 直接响应客户端
+     * @param ctx
+     * @param msg
+     * @param useJson 是否使用json传输，决定了是否在字符后面加 '\0' 结尾符符号
+     */
+    private void httpResponse(ChannelHandlerContext ctx, String msg, boolean useJson)
     {
         logger.info(String.format("[Rspd]:%s", msg));
         FullHttpResponse response = new DefaultFullHttpResponse(
-                HTTP_1_1, OK, Unpooled.wrappedBuffer(BytesUtils.string2Bytes(msg)));
-        response.headers().set(CONTENT_TYPE, "text/plain");
+                HTTP_1_1, OK, Unpooled.wrappedBuffer(BytesUtils.string2Bytes(msg, useJson)));
+        if (useJson)
+            response.headers().set(CONTENT_TYPE, "application/json");
+        else
+            response.headers().set(CONTENT_TYPE, "text/plain");
         response.headers().set(CONTENT_LENGTH, response.content().readableBytes());
         response.headers().set(CONNECTION, HttpHeaderValues.KEEP_ALIVE);
+        response.headers().set("Access-Control-Allow-Origin", "*");
         ctx.writeAndFlush(response);
     }
 
@@ -110,6 +128,6 @@ public class GateMonitor extends Monitor
     private void forward2BalanceServer(JSONObject jsonObject)
     {
         byte[] bytes = BytesUtils.string2Bytes(jsonObject.toString());
-        gateClient.GetChanel().writeAndFlush(bytes);
+        sendBytes(gateClient.GetChanel(),bytes);
     }
 }

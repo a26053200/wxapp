@@ -1,6 +1,7 @@
 package com.betel.servers.gate;
 
 import com.betel.common.Monitor;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
@@ -12,7 +13,7 @@ import org.apache.log4j.Logger;
  * @Author: zhengnan
  * @Date: 2018/6/5 23:24
  */
-public class GateClientHandler extends SimpleChannelInboundHandler<Monitor>
+public class GateClientHandler extends SimpleChannelInboundHandler<ByteBuf>
 {
     private static final Logger logger = Logger.getLogger(GateClientHandler.class);
 
@@ -30,10 +31,12 @@ public class GateClientHandler extends SimpleChannelInboundHandler<Monitor>
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, Monitor monitor) throws Exception
+    protected void channelRead0(ChannelHandlerContext ctx, ByteBuf buf) throws Exception
     {
         Channel incoming = ctx.channel();
-        logger.info("Gate Client Channel:" + incoming.id());
+        //logger.info("Gate Client Channel:" + incoming.id());
+        logger.info("收到数据长度:" + buf.readableBytes());
+        monitor.recvByteBuf(ctx,buf);
     }
 
     @Override

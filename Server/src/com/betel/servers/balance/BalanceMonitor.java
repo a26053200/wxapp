@@ -50,7 +50,7 @@ public class BalanceMonitor extends Monitor
                 break;
             // 网关服务器
             case ServerName.GATE_SERVER:
-                jsonObject.put(FieldName.SERVER,ServerName.CLIENT);
+                //jsonObject.put(FieldName.SERVER,ServerName.CLIENT_MP);
                 forward2GateServer(jsonObject);
                 break;
             //均衡服务器的消息直接处理
@@ -77,13 +77,13 @@ public class BalanceMonitor extends Monitor
     private void forward2GateServer(JSONObject jsonObject)
     {
         byte[] bytes = BytesUtils.string2Bytes(jsonObject.toString());
-        gateServerContext.channel().writeAndFlush(bytes);
+        sendBytes(gateServerContext.channel(),bytes);
     }
 
     // 转发给
     private void forward2BusinessServer(JSONObject jsonObject)
     {
         byte[] bytes = BytesUtils.string2Bytes(jsonObject.toString());
-        businessServerContext.channel().writeAndFlush(bytes);
+        sendBytes(businessServerContext.channel(),bytes);
     }
 }

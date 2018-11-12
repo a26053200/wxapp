@@ -83,7 +83,7 @@ public abstract class Monitor
         initDB();
     }
 
-    public void InitSubMonitors()
+    protected void InitSubMonitors()
     {
         Iterator iterator = subMonitorMap.keySet().iterator();
         while (iterator.hasNext()) {
@@ -110,21 +110,40 @@ public abstract class Monitor
             ex.printStackTrace();
         }
     }
-    // 接收服务器直接的直接,直接可以转化为json
+    // 接收客户端发来的字节,然后转换为json
+    public void recvByteBuf(ChannelHandlerContext ctx, ByteBuf buf, long packLen)
+    {
+        int msgLen = buf.readableBytes();
+        String json = BytesUtils.readString(buf, (int) packLen);
+        logger.info(String.format("[recv] msgLen:%d json:%s", msgLen, json));
+        //已知JSONObject,目标要转换为json字符串
+        try
+        {
+            JSONObject jsonObject = JSONObject.parseObject(json);
+            RespondJson(ctx, jsonObject);
+        }
+        catch (JSONException ex)
+        {
+            ex.printStackTrace();
+        }
+    }
+    // 接收服务器之间的数据,直接可以转化为json
     public void recvJsonBuff(ChannelHandlerContext ctx, ByteBuf buf)
     {
         String json = BytesUtils.readString(buf);
+        logger.info(String.format("[recv] json:%s",  json));
         //不知道为什么 以后查
         while(!json.startsWith("{"))
         {
             logger.info("Receive json buff 首字符异常:" + json);
             json = json.substring(1);//当收到json
+            logger.info("Receive json buff 纠正首字母:" + json);
         }
         logger.info(String.format("[recv] json:%s",  json));
         recvJson(ctx,json);
     }
 
-    public void recvJson(ChannelHandlerContext ctx, String json)
+    protected void recvJson(ChannelHandlerContext ctx, String json)
     {
         try
         {
@@ -142,7 +161,18 @@ public abstract class Monitor
         try
         {
             if(json.startsWith("?"))
+            {
+                logger.warn("Receive weixin App json 首字符异常:" + json);
                 json = json.substring(1);//去掉问号
+                logger.warn("Receive weixin App json 去掉问号:" + json);
+            }
+            if(!json.startsWith("{") && !json.endsWith("{"))// 加上花括号
+            {
+                logger.warn("Receive weixin App json 首字符异常:" + json);
+                json = "{" + json+ "}";
+                logger.warn("Receive weixin App json 加上花括号:" + json);
+            }
+
             JSONObject jsonObject = JSONObject.parseObject(json);
             RespondJson(ctx, jsonObject);
         }
@@ -169,15 +199,13 @@ public abstract class Monitor
      */
     protected abstract void initDB();
 
-    protected void sendString(ChannelHandlerContext ctx, String msg)
+    protected void sendBytes(Channel channel, byte[] bytes)
     {
-        ctx.channel().write(BytesUtils.string2Bytes(msg));
-    }
-
-    protected String[] getParams(JSONObject jsonObject)
-    {
-        String dataStr = jsonObject.getString("data");
-        String[] params = dataStr.split("&");
-        return  params;
+        byte[] lenBytes = BytesUtils.intToByteArray(bytes.length);
+        byte[] mergeBytes = new byte[bytes.length + lenBytes.length];
+        //合并字节
+        System.arraycopy(lenBytes, 0, mergeBytes, 0, lenBytes.length);
+        System.arraycopy(bytes, 0, mergeBytes, lenBytes.length, bytes.length);
+        channel.writeAndFlush(mergeBytes);
     }
 }

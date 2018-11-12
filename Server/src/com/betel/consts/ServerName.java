@@ -8,11 +8,28 @@ package com.betel.consts;
  */
 public class ServerName
 {
-    public static final String CLIENT = "client";
+    /**
+     * 微信小程序客户端
+     */
+    public static final String CLIENT_MP = "client_mp";
 
+    /**
+     * 微信小程序客户端
+     */
+    public static final String CLIENT_WEB = "client_web";
+
+    /**
+     * 网关服务器
+     */
     public static final String GATE_SERVER = "GateServer";
 
+    /**
+     * 均衡服务器
+     */
     public static final String BALANCE_SERVER = "BalanceServer";
 
-    public static final String BUSINESS_SERVER = "BusinessServer";//核心业务服务器
+    /**
+     * 核心业务服务器
+     */
+    public static final String BUSINESS_SERVER = "BusinessServer";
 }

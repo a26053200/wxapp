@@ -23,7 +23,32 @@ public class FieldName
 
     public static final String PROBE_MSG = "probe_msg"; //探测
 
+
+    /**  用户  **/
+    public static final String PROFILE_INFO = "profile_info";
+
     /**  买家  **/
     public static final String BUYER_INFO = "buyer_info";
+
+
+    /**
+     * Web端ID
+     */
+    public static final String WEB_CLIENT_ID = "web_client_id";
+
+    /**
+     * 扫码ID
+     */
+    public static final String SCAN_ID = "scan_id";
+
+    /**
+     * 扫码状态
+     */
+    public static final String SCAN_STATE = "scan_state";
+
+    /**
+     * 卖家
+     */
+    public static final String SELLER_INFO = "seller_info";
 
 }

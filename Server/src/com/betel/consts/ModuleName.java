@@ -24,6 +24,11 @@ public class ModuleName
     public final static String BUYER = "buyer";
 
     /**
+     * 卖家
+     */
+    public final static String SELLER = "seller";
+
+    /**
      * 商品
      */
     public final static String PRODUCT = "product";

@@ -47,18 +47,18 @@ public abstract class SubMonitor
         ctx.channel().writeAndFlush(BytesUtils.packBytes(BytesUtils.string2Bytes(msg)));
     }
     //回应客户端请求
-    protected void rspdClient(Session session)
-    {
-        rspdClient(session, null);
-    }
+//    protected void rspdClient(Session session)
+//    {
+//        rspdClient(session, null);
+//    }
 
     //回应客户端请求 带数据体 (先转发给网关服务器,再由网关服务器转发给客户端)
-    protected void rspdClient(Session session, JSONObject sendJson)
+    protected void rspdClient(Session session, JSONObject sendJson,String forwardServer)
     {
         String channelId = session.getChannelId();
         JSONObject rspdJson = new JSONObject();
         rspdJson.put(FieldName.SERVER, ServerName.GATE_SERVER);
-        rspdJson.put(FieldName.FORWARD_SERVER, ServerName.CLIENT);
+        rspdJson.put(FieldName.FORWARD_SERVER, forwardServer);
         rspdJson.put(Action.NAME, session.getRqstAction());
         rspdJson.put(FieldName.CHANNEL_ID, channelId);
         rspdJson.put(FieldName.STATE, session.getState().ordinal());

@@ -15,7 +15,7 @@ public class Session
 {
     //通信信道
     private ChannelHandlerContext context;
-    //接收到的josn
+    //接收到的json
     private JSONObject recvJson;
     //会话状态
     private SessionStatus status;
