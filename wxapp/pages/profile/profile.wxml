@@ -6,9 +6,13 @@
       <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
       <text class="userinfo-nickname">{{userInfo.nickName}}</text>
     </block>
+    
   </view>
+  <text>profileInfo:{{profileInfo.profile_id}}</text>
+  <text>buyerInfo:{{buyerInfo.buyer_id}}</text>
   <view class="usermotto">
     <!--<text class="user-motto">{{motto}}</text>-->
-    <button class='expandButton' type="primary" plain="true" size="mini" bindtap="bindLoginWeixinServer"> click to start </button>
+    <button class='expandButton' type="primary" plain="true" size="mini" bindtap="bindScanCodeLogin">扫一扫登录后台</button>
+    <view>{{scanId}}</view>
   </view>
 </view>

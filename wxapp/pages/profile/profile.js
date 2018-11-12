@@ -11,10 +11,13 @@ Page({
    * 页面的初始数据
    */
   data: {
+    app:app,
     userInfo: {},
+    profileInfo: null,
+    buyerInfo: null,
     hasUserInfo: false,
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
-    isGetingBuyerInfo: false
+    scanId:"undefined"
   },
 
   onLoad: function() {
@@ -55,23 +58,19 @@ Page({
     * 生命周期函数--监听页面显示
     */
   onShow: function () {
-    this.probeServer();
+    //this.probeServer();
   },
   /**
   * 生命周期函数--监听页面隐藏
   */
   onHide: function () {
-    this.data.isGetingBuyerInfo = false;
+
   },
   // 探测服务器状态
   probeServer: function() {
     var _this = this;
-    if (this.data.isGetingBuyerInfo)
-    {
+    if (app.globalData.profileInfo)
       return
-    }else{
-      this.data.isGetingBuyerInfo = true;
-    }
     // 先探测服务器是否正常开启
     net.sendData({
       action: "buyer@mp_probe"
@@ -101,6 +100,12 @@ Page({
           }
           net.sendData(data, function(res) {
             if (res.errcode == null || res.errcode == undefined) { //成功获取,服务器返回买家信息
+              _this.setData({
+                profileInfo: res.data.profile_info,
+                buyer_info: res.data.buyer_info
+              })
+              app.globalData.profileInfo = res.data.profile_info;
+              app.globalData.buyer_info = res.data.buyer_info;
               _this.onBuyerInfo();
             } else {
               //"errcode": 40029, "errmsg": "invalid code"
@@ -130,7 +135,34 @@ Page({
   },
 
   onBuyerInfo: function(){
-    this.data.isGetingBuyerInfo = false;
-  }
+    
+  },
 
+  bindScanCodeLogin : function(){
+    var _this = this;
+    // 只允许从相机扫码
+    wx.scanCode({
+      onlyFromCamera: false,
+      success(res) {
+        //console.log(res)
+        _this.notifyWebClientLogin(res.result)
+      }
+    })
+  },
+
+  notifyWebClientLogin: function (scan_id){
+    var _this = this;
+    //买家请求服务器登陆微信接口服务器
+    var data = {
+      action: "seller@mp_scan_web_login",
+      scan_id: scan_id,
+      scan_state: "Accept"
+    }
+    net.sendData(data, function (res) {
+      _this.setData({
+        scanId: scan_id
+      })
+      console.log("scan_state：" + res.data.scan_state);
+    });
+  }
 })

@@ -34,6 +34,8 @@ App({
     })
   },
   globalData: {
-    userInfo: null
+    userInfo: null,
+    profileInfo: null,
+    buyerInfo: null,
   }
 })
