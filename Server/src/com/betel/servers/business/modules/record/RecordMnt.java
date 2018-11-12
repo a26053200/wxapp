@@ -38,8 +38,7 @@ public class RecordMnt extends SubMonitor
     {
         // 添加一次登陆记录
         long recordId = IdGenerator.getInstance().nextId();//生成玩家Id
-        RecordVo loginRecord = new RecordVo(buyer.getId(), Long.toString(recordId));
-        loginRecord.setType("Login");
+        RecordVo loginRecord = new RecordVo(buyer.getId(), Long.toString(recordId),"Login");
         loginRecord.setContent("微信买家登录");
         loginRecord.setAddTime(TimeUtils.date2String(new Date()));
         loginRecord.writeDB(db);

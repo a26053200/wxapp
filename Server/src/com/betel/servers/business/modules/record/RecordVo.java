@@ -22,7 +22,7 @@ public class RecordVo extends BaseVo implements IDataBaseVo
 
     public RecordVo(String recorderId, String id, String type)
     {
-        super(RedisKeys.record + ":" + recorderId + ":" + type);
+        super(RedisKeys.record + ":" + recorderId + ":" + type + ":" + id);
         this.recorderId = recorderId;
         this.id = id;
         this.type = type;
