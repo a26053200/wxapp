@@ -17,28 +17,24 @@ public class RecordVo extends BaseVo implements IDataBaseVo
     private String id;
     private String type;            //记录类型
     private String content;         //记录内容
-    private String profileId;  //记录者OpenId
+    private String recorderId;      //记录者OpenId
     private String addTime;         //记录添加时间
 
-    public RecordVo(String profileId, String id)
+    public RecordVo(String recorderId, String id, String type)
     {
-        super(RedisKeys.record + ":" + profileId + ":" + id);
-        this.profileId = profileId;
+        super(RedisKeys.record + ":" + recorderId + ":" + type);
+        this.recorderId = recorderId;
         this.id = id;
+        this.type = type;
     }
     public String getId()
     {
         return id;
     }
 
-    public void setId(String id)
+    public String getRecorderId()
     {
-        this.id = id;
-    }
-
-    public String getProfileId()
-    {
-        return profileId;
+        return recorderId;
     }
 
     public String getAddTime()
@@ -54,11 +50,6 @@ public class RecordVo extends BaseVo implements IDataBaseVo
     public String getType()
     {
         return type;
-    }
-
-    public void setType(String type)
-    {
-        this.type = type;
     }
 
     public String getContent()
@@ -87,7 +78,7 @@ public class RecordVo extends BaseVo implements IDataBaseVo
     public void writeDB(Jedis db)
     {
         db.hset(primaryKey, RedisKeys.record_id,            id);
-        db.hset(primaryKey, RedisKeys.record_profile_id, profileId);
+        db.hset(primaryKey, RedisKeys.record_profile_id, recorderId);
         db.hset(primaryKey, RedisKeys.record_type,          type);
         db.hset(primaryKey, RedisKeys.record_content,       content);
         db.hset(primaryKey, RedisKeys.record_add_time,      addTime);
