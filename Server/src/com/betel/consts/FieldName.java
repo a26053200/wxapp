@@ -24,6 +24,10 @@ public class FieldName
     public static final String PROBE_MSG = "probe_msg"; //探测
 
 
+    public static final String OPEN_ID = "openid";
+
+    public static final String UNION_ID = "unionid";
+
     /**  用户  **/
     public static final String PROFILE_INFO = "profile_info";
 
@@ -45,6 +49,11 @@ public class FieldName
      * 扫码状态
      */
     public static final String SCAN_STATE = "scan_state";
+
+    /**
+     * 扫码状态
+     */
+    public static final String TOKEN = "token";
 
     /**
      * 卖家

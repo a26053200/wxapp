@@ -6,6 +6,9 @@ import com.betel.common.interfaces.IDataBaseVo;
 import com.betel.database.RedisKeys;
 import redis.clients.jedis.Jedis;
 
+import java.util.Iterator;
+import java.util.Set;
+
 /**
  * @ClassName: 用户信息（包括买家和卖家和管理员）
  * @Description: TODO
@@ -27,6 +30,11 @@ public class ProfileVo extends BaseVo implements IDataBaseVo
     private String wxCountry;
     private String wxAvatarUrl;
 
+    public ProfileVo()
+    {
+
+
+    }
     public ProfileVo(String openId)
     {
         super(RedisKeys.profile + ":" + openId);
@@ -108,6 +116,21 @@ public class ProfileVo extends BaseVo implements IDataBaseVo
         this.wxAvatarUrl    = wxUserInfo.getString("avatarUrl");
     }
 
+    public void fromDB(Jedis db,String profile_id)
+    {
+        Set<String> profileSet = db.keys(RedisKeys.profile + ":*");
+        Iterator<String> it = profileSet.iterator();
+        while (it.hasNext())
+        {
+            String primaryKey = it.next();
+            String pid = db.hget(primaryKey, RedisKeys.profile_id);
+            if (profile_id.equals(pid))
+            {
+                this.primaryKey = primaryKey;
+                fromDB(db);
+            }
+        }
+    }
     @Override
     public void fromDB(Jedis db)
     {
@@ -120,6 +143,14 @@ public class ProfileVo extends BaseVo implements IDataBaseVo
             openId          = db.hget(primaryKey, RedisKeys.profile_open_id);
             unionId         = db.hget(primaryKey, RedisKeys.profile_union_id);
             registerTime    = db.hget(primaryKey, RedisKeys.profile_register_time);
+
+            wxNickName      = db.hget(primaryKey, RedisKeys.profile_wx_nickname);
+            wxGender        = db.hget(primaryKey, RedisKeys.profile_wx_gender);
+            wxLanguage      = db.hget(primaryKey, RedisKeys.profile_wx_language);
+            wxCity          = db.hget(primaryKey, RedisKeys.profile_wx_city);
+            wxProvince         = db.hget(primaryKey, RedisKeys.profile_wx_province);
+            wxCountry       = db.hget(primaryKey, RedisKeys.profile_wx_country);
+            wxAvatarUrl         = db.hget(primaryKey, RedisKeys.profile_wx_avatar_url);
         }
     }
 
@@ -148,7 +179,15 @@ public class ProfileVo extends BaseVo implements IDataBaseVo
     {
         JSONObject json = new JSONObject();
         json.put(RedisKeys.profile_id, id);
-        json.put(RedisKeys.profile_open_id, openId);
+        //json.put(RedisKeys.profile_open_id, openId);
+        json.put(RedisKeys.profile_wx_nickname,    wxNickName);
+        json.put(RedisKeys.profile_wx_gender,      wxGender);
+        json.put(RedisKeys.profile_wx_language,    wxLanguage);
+        json.put(RedisKeys.profile_wx_city,        wxCity);
+        json.put(RedisKeys.profile_wx_province,    wxProvince);
+        json.put(RedisKeys.profile_wx_country,     wxCountry);
+        json.put(RedisKeys.profile_wx_avatar_url,  wxAvatarUrl);
+
         return json;
     }
 }

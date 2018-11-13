@@ -61,7 +61,7 @@ public class Action
     /**
      * web端扫码登录
      */
-    public final static String WEB_LOGIN = "web_login";
+    public final static String WEB_SCAN_LOGIN = "web_scan_login";
 
     /**
      * 商家登录服务器

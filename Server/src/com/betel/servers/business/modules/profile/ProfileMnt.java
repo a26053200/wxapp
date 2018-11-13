@@ -53,7 +53,7 @@ public class ProfileMnt extends SubMonitor
     {
         String nowTime = TimeUtils.date2String(new Date());
         String channelId = session.getChannelId();
-        String openid = wxLoginInfoJson.getString("openid");// 微信OpenID
+        String openid = wxLoginInfoJson.getString(FieldName.OPEN_ID);// 微信OpenID
         ProfileVo profile = getProfileInfo(channelId);// 用户信息
         if (profile == null)
         {

@@ -6,8 +6,10 @@ import com.betel.common.SubMonitor;
 import com.betel.consts.Action;
 import com.betel.consts.FieldName;
 import com.betel.consts.ServerName;
+import com.betel.database.RedisKeys;
+import com.betel.servers.business.modules.profile.ProfileVo;
 import com.betel.session.Session;
-import com.betel.utils.IdGenerator;
+import com.betel.utils.JwtHelper;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.log4j.Logger;
 
@@ -36,18 +38,6 @@ public class SellerMnt extends SubMonitor
         public final static String Accept   = "Accept";
         public final static String Refuse   = "Refuse";
     }
-    class ScanInfo
-    {
-        public String state;
-        public long startTime;
-
-        public ScanInfo(String state, long startTime)
-        {
-            this.state = state;
-            this.startTime = startTime;
-        }
-    }
-
 
     final static Logger logger = Logger.getLogger(SellerMnt.class);
     /**
@@ -87,7 +77,7 @@ public class SellerMnt extends SubMonitor
             case Action.WEB_RQST_SCAN_CODE_LOGIN:
                 webRqstLoginQRCode(session);
                 break;
-            case Action.WEB_LOGIN:
+            case Action.WEB_SCAN_LOGIN:// 扫码登录
                 webScanCodeLogin(session);
                 break;
             case Action.MP_SCAN_WEB_LOGIN:
@@ -100,22 +90,17 @@ public class SellerMnt extends SubMonitor
     private void webAdminProbe(Session session)
     {
         JSONObject sendJson = new JSONObject();
-        //标识客户端ID
-        String webClientId = Long.toString(IdGenerator.getInstance().nextId());
         sendJson.put(FieldName.PROBE_STATE, true);
         sendJson.put(FieldName.PROBE_MSG, "探测返回.服务器运行正常");
-        sendJson.put(FieldName.WEB_CLIENT_ID, webClientId);
         rspdClient(session, sendJson, ServerName.CLIENT_WEB);
     }
 
     // Web请求登录用的二维码
     private void webRqstLoginQRCode(Session session)
     {
-        //标识客户端ID
-        //String webClientId = session.getRecvJson().getString(FieldName.WEB_CLIENT_ID);
         //扫码用临时id
-        //String scanId = Long.toString(IdGenerator.getInstance().nextId());
         String scanId = "zhengnan";
+        //String scanId = Long.toString(IdGenerator.getInstance().nextId());
         qrCodeHasScanned.put(scanId,new ScanInfo(ScanCodeState.WaitScan,System.currentTimeMillis()));
         JSONObject sendJson = new JSONObject();
         sendJson.put(FieldName.SCAN_ID, scanId);
@@ -130,17 +115,29 @@ public class SellerMnt extends SubMonitor
         JSONObject sendJson = new JSONObject();
         if(scanInfo != null)
         {
-            logger.info("登录中...." + scanInfo.state);
-            switch (scanInfo.state)
+            logger.info("登录中...." + scanInfo.getState());
+            switch (scanInfo.getState())
             {
                 case ScanCodeState.Scanned://验证通过,登录成功
-                    scanInfo.state = ScanCodeState.Used;
-                    sendJson.put(FieldName.SCAN_STATE, ScanCodeResult.Success);
+                    scanInfo.setState(ScanCodeState.Used);
+
+                    //成功后返回扫码者的微信用户信息过去
+                    String profileId = scanInfo.getScanProfileId();
+                    ProfileVo profile = GetWebRspdProfileInfo(profileId);
+                    if(profile.isEmpty())
+                    {//扫码成功但是用户数据为空
+                        sendJson.put(FieldName.SCAN_STATE, ScanCodeResult.Fail);
+                    }else{
+                        sendJson.put(FieldName.SCAN_STATE, ScanCodeResult.Success);
+                        String token = JwtHelper.createJWT(profileId);
+                        sendJson.put(FieldName.TOKEN,token);//登录令牌
+                        sendJson.put(FieldName.SELLER_INFO,profile.toJson());
+                    }
                     break;
                 case ScanCodeState.WaitScan://还在等待验证
-                    if(System.currentTimeMillis() - scanInfo.startTime > MAX_SCAN_WAIT_TIME)
+                    if(System.currentTimeMillis() - scanInfo.getStartTime() > MAX_SCAN_WAIT_TIME)
                     {
-                        scanInfo.state = ScanCodeState.Overdue  ;
+                        scanInfo.setState(ScanCodeState.Overdue);
                         sendJson.put(FieldName.SCAN_STATE, ScanCodeState.Overdue);
                     }
                     else
@@ -169,18 +166,28 @@ public class SellerMnt extends SubMonitor
         if(scanInfo != null)
         {
             if(ScanCodeResult.Accept.equals(scanResult))
-            {
-                if(scanInfo.state == ScanCodeState.WaitScan)
-                {// 只有新的验证码才能
-                    scanInfo.state = ScanCodeState.Scanned;
-                }else{
-
+            {//扫码同意
+                if(scanInfo.getState() == ScanCodeState.WaitScan)
+                {// 扫码登录成功
+                    scanInfo.setState(ScanCodeState.Scanned);
+                    scanInfo.setScanProfileId(session.getRecvJson().getString(RedisKeys.profile_id));
+                    sendJson.put(FieldName.SCAN_STATE,scanInfo.getState());
+                }else{//二维码已经过期
+                    sendJson.put(FieldName.SCAN_STATE,ScanCodeState.Overdue);
                 }
+            }else{//扫码拒绝
+                sendJson.put(FieldName.SCAN_STATE,ScanCodeResult.Refuse);
             }
-            sendJson.put(FieldName.SCAN_STATE,scanInfo.state);
         }else{
             sendJson.put(FieldName.SCAN_STATE,ScanCodeState.Overdue);
         }
         rspdClient(session, sendJson, ServerName.CLIENT_WEB);
+    }
+
+    private ProfileVo GetWebRspdProfileInfo(String profileId)
+    {
+        ProfileVo profile = new ProfileVo();
+        profile.fromDB(db, profileId);
+        return profile;
     }
 }
