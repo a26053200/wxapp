@@ -155,6 +155,7 @@ Page({
     //买家请求服务器登陆微信接口服务器
     var data = {
       action: "seller@mp_scan_web_login",
+      profile_id: this.data.profileInfo.profile_id,
       scan_id: scan_id,
       scan_state: "Accept"
     }
@@ -163,6 +164,6 @@ Page({
         scanId: scan_id
       })
       console.log("scan_state：" + res.data.scan_state);
-    });
+    }); 
   }
 })

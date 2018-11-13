@@ -5,7 +5,7 @@ function sendData(data, callback, failCallback) {
   data.server = "BusinessServer";
   console.log("[send]" + JSON.stringify(data));
   wx.request({
-    url: 'http://127.0.0.1:8090/',
+    url: 'http://192.168.31.244:8090/',
     data: data,
     header: {
       'content-type': 'application/json' // 默认值
