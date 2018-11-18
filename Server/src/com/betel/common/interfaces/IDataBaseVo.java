@@ -1,6 +1,9 @@
 package com.betel.common.interfaces;
 
+import com.alibaba.fastjson.JSONObject;
 import redis.clients.jedis.Jedis;
+
+import java.util.Map;
 
 /**
  * @ClassName: IDataBaseVo

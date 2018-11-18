@@ -8,6 +8,10 @@ package com.betel.consts;
  */
 public class FieldName
 {
+
+    //====================
+    // 核心功能字段名
+    //====================
     public static final String SERVER = "server";
 
     public static final String CHANNEL_ID = "channelId";
@@ -18,22 +22,46 @@ public class FieldName
 
     public static final String FORWARD_SERVER = "forward_server"; //转发服务器
 
-    /**  探测  **/
-    public static final String PROBE_STATE = "probe_state"; //探测结果
+    //====================
+    // 常用字段名
+    //====================
+    public static final String NAME = "name";
 
-    public static final String PROBE_MSG = "probe_msg"; //探测
+    public static final String TIME = "time";
 
+    public static final String KEY = "key";
+    //====================
+    // 登录
+    //====================
+    /**
+     * 探测结果
+     */
+    public static final String PROBE_STATE = "probe_state";
 
+    /**
+     * 探测消息
+     */
+    public static final String PROBE_MSG = "probe_msg";
+
+    /**
+     * 微信openid
+     */
     public static final String OPEN_ID = "openid";
 
+    /**
+     * unionid
+     */
     public static final String UNION_ID = "unionid";
 
-    /**  用户  **/
+    /**
+     * 用户
+     */
     public static final String PROFILE_INFO = "profile_info";
 
-    /**  买家  **/
+    /**
+     *  买家
+     */
     public static final String BUYER_INFO = "buyer_info";
-
 
     /**
      * Web端ID
@@ -59,5 +87,18 @@ public class FieldName
      * 卖家
      */
     public static final String SELLER_INFO = "seller_info";
+
+
+    //====================
+    // 业务相关字段名
+    //====================
+    /**
+     * 品牌信息
+     */
+    public static final String BRAND_INFO = "brand_info";
+    /**
+     * 品牌信息列表
+     */
+    public static final String BRAND_LIST = "brand_list";
 
 }

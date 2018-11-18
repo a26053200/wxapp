@@ -1,8 +1,10 @@
 package com.betel.utils;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName: JsonUtils
@@ -12,6 +14,34 @@ import java.util.List;
  */
 public class JsonUtils
 {
+
+    public static <T> JSONObject object2Json(T t)
+    {
+        JSONObject json = (JSONObject)JSONObject.toJSON(t);
+        return json;
+    }
+
+    public static JSONObject map2jsonObject(Map<String, String> map)
+    {
+        JSONObject json = new JSONObject();
+        for (String key : map.keySet()) {
+            json.put(key,map.get(key));
+        }
+        return json;
+    }
+
+    public static <T> T map2Object(Map<String, String> map, Class<T> clazz)
+    {
+        JSONObject json = JsonUtils.map2jsonObject(map);
+        T t = JSONObject.toJavaObject(json,clazz);
+        return t;
+    }
+
+    public static String trim(String json)
+    {
+        return json.trim();
+    }
+
     private static String getLevelStr(int level)
     {
         StringBuffer levelStr = new StringBuffer();
@@ -21,10 +51,7 @@ public class JsonUtils
         }
         return levelStr.toString();
     }
-    public static String trim(String json)
-    {
-        return json.trim();
-    }
+
     public static String format(String json)
     {
         int level = 0;

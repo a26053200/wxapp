@@ -11,9 +11,8 @@ import redis.clients.jedis.Jedis;
  * @Author: zhengnan
  * @Date: 2018/11/7 23:45
  */
-public class SpecVo extends BaseVo implements IDataBaseVo
+public class SpecVo extends AttributeVo
 {
-    private final static String ID = "id";
 
     @Override
     public JSONObject toJson()

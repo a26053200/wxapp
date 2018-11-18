@@ -1,18 +1,15 @@
 package com.betel.servers.business;
 
 import com.alibaba.fastjson.JSONObject;
+import com.betel.asd.BaseAction;
 import com.betel.common.Monitor;
-import com.betel.common.SubMonitor;
-import com.betel.consts.Action;
-import com.betel.consts.FieldName;
-import com.betel.consts.ModuleName;
-import com.betel.consts.ServerName;
+import com.betel.consts.*;
 import com.betel.database.RedisClient;
-import com.betel.servers.business.modules.buyer.BuyerMnt;
-import com.betel.servers.business.modules.product.ProductMnt;
-import com.betel.servers.business.modules.profile.ProfileMnt;
-import com.betel.servers.business.modules.record.RecordMnt;
-import com.betel.servers.business.modules.seller.SellerMnt;
+import com.betel.servers.business.modules.brand.BrandAction;
+import com.betel.servers.business.modules.buyer.BuyerAction;
+import com.betel.servers.business.modules.profile.ProfileAction;
+import com.betel.servers.business.modules.record.RecordAction;
+import com.betel.servers.business.modules.seller.SellerAction;
 import com.betel.utils.BytesUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -33,12 +30,13 @@ public class BusinessMonitor extends Monitor
     public BusinessMonitor()
     {
         super();
-        subMonitorMap.put(ModuleName.PROFILE, new ProfileMnt(this));
-        subMonitorMap.put(ModuleName.RECORD, new RecordMnt(this));
-        subMonitorMap.put(ModuleName.BUYER, new BuyerMnt(this));
-        subMonitorMap.put(ModuleName.SELLER, new SellerMnt(this));
-        subMonitorMap.put(ModuleName.PRODUCT, new ProductMnt(this));
         InitSubMonitors();
+
+        actionMap.put(Bean.RECORD,      new RecordAction(this));
+        actionMap.put(Bean.PROFILE,     new ProfileAction(this));
+        actionMap.put(Bean.BUYER,       new BuyerAction(this));
+        actionMap.put(Bean.SELLER,      new SellerAction(this));
+        actionMap.put(Bean.BRAND,       new BrandAction(this));
     }
     public void SetGameServerClient(BusinessClient businessServerClient)
     {
@@ -62,17 +60,17 @@ public class BusinessMonitor extends Monitor
     @Override
     protected void RespondJson(ChannelHandlerContext ctx, JSONObject jsonObject)
     {
-        String action = jsonObject.getString("action");
-        String[] actions = action.split("@");
-        logger.info("Recv action: " + action);
-        String moduleName = actions[0];
-        String subAction = actions.length > 1 ? actions[1] : Action.NONE;
-        SubMonitor subMnt = subMonitorMap.get(moduleName);
-        if (subMnt != null)
-            subMnt.ActionHandler(ctx, jsonObject, subAction);
+        String actionParam = jsonObject.getString("action");
+        String[] actions = actionParam.split("@");
+        logger.info("Recv action: " + actionParam);
+        String actionName = actions[0];
+        String actionMethod = actions.length > 1 ? actions[1] : Action.NONE;
+        BaseAction action = actionMap.get(actionName);
+        if (action != null)
+            action.ActionHandler(ctx, jsonObject, actionMethod);
         else
         {
-            logger.error("There is no monitor for action:" + action);
+            logger.error("There is no action service for action:" + actionParam);
         }
 
     }

@@ -2,6 +2,7 @@ package com.betel.common;
 
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
+import com.betel.asd.BaseAction;
 import com.betel.utils.BytesUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
@@ -42,6 +43,10 @@ public abstract class Monitor
      * 子Monitor
      */
     protected HashMap<String, SubMonitor> subMonitorMap;
+    /**
+     * Actions
+     */
+    protected HashMap<String, BaseAction<?>> actionMap;
 
     public ChannelGroup getChannelGroup()
     {
@@ -79,6 +84,7 @@ public abstract class Monitor
         channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
         contextMap = new HashMap<>();
         subMonitorMap = new HashMap<>();
+        actionMap = new HashMap<>();
         //初始化数据库
         initDB();
     }
@@ -91,6 +97,17 @@ public abstract class Monitor
             subMonitorMap.get(key).Init();
         }
     }
+
+    public BaseAction getAction(String name)
+    {
+        return actionMap.get(name);
+    }
+
+    public Jedis getDB()
+    {
+        return db;
+    }
+
     // 接收客户端发来的字节,然后转换为json
     public void recvByteBuf(ChannelHandlerContext ctx, ByteBuf buf)
     {

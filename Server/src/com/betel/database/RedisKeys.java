@@ -8,6 +8,10 @@ package com.betel.database;
  */
 public class RedisKeys
 {
+    public static final String SPLIT                    = ":";
+    public static final String WILDCARD                 = "*";
+    public static final String ID                       = "id";//主键
+    public static final String VID                      = "vid";//附键
     /**
      * 用户profile
      */

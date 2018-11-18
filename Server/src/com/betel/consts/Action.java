@@ -64,7 +64,25 @@ public class Action
     public final static String WEB_SCAN_LOGIN = "web_scan_login";
 
     /**
+     * web端直接登录
+     */
+    public final static String WEB_LOGIN = "web_login";
+
+    /**
      * 商家登录服务器
      */
     public final static String WEB_SELLER_LOGIN_SERVER = "web_seller_login_server";
+
+    //----------------
+    // 商品定义
+    //----------------
+
+    /**
+     * 商品添加品牌
+     */
+    public final static String ADD_BRAND = "add_brand";
+    /**
+     * 获取品牌列表
+     */
+    public final static String BRAND_LIST = "brand_list";
 }
