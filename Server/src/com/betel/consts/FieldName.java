@@ -25,11 +25,17 @@ public class FieldName
     //====================
     // 常用字段名
     //====================
+    public static final String ID = "name";
+
     public static final String NAME = "name";
 
     public static final String TIME = "time";
 
     public static final String KEY = "key";
+
+    public static final String NUMBER = "number";
+
+    public static final String VALUE = "value";
     //====================
     // 登录
     //====================
@@ -100,5 +106,29 @@ public class FieldName
      * 品牌信息列表
      */
     public static final String BRAND_LIST = "brand_list";
+    /**
+     * 品类信息
+     */
+    public static final String CATEGORY_INFO = "category_info";
+    /**
+     * 品类信息列表
+     */
+    public static final String CATEGORY_LIST = "category_list";
+    /**
+     * 规格信息
+     */
+    public static final String SPEC_INFO = "spec_info";
+    /**
+     * 规格信息列表
+     */
+    public static final String SPEC_LIST = "spec_list";
+    /**
+     * 规格值信息
+     */
+    public static final String SPEC_VALUE_INFO = "spec_value_info";
+    /**
+     * 规格值列表
+     */
+    public static final String SPEC_VALUE_LIST = "spec_value_list";
 
 }

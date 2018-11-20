@@ -7,9 +7,11 @@ import com.betel.consts.*;
 import com.betel.database.RedisClient;
 import com.betel.servers.business.modules.brand.BrandAction;
 import com.betel.servers.business.modules.buyer.BuyerAction;
+import com.betel.servers.business.modules.category.CategoryAction;
 import com.betel.servers.business.modules.profile.ProfileAction;
 import com.betel.servers.business.modules.record.RecordAction;
 import com.betel.servers.business.modules.seller.SellerAction;
+import com.betel.servers.business.modules.spec.SpecAction;
 import com.betel.utils.BytesUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -37,6 +39,8 @@ public class BusinessMonitor extends Monitor
         actionMap.put(Bean.BUYER,       new BuyerAction(this));
         actionMap.put(Bean.SELLER,      new SellerAction(this));
         actionMap.put(Bean.BRAND,       new BrandAction(this));
+        actionMap.put(Bean.CATEGORY,    new CategoryAction(this));
+        actionMap.put(Bean.SPEC,        new SpecAction(this));
     }
     public void SetGameServerClient(BusinessClient businessServerClient)
     {

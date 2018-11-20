@@ -85,4 +85,28 @@ public class Action
      * 获取品牌列表
      */
     public final static String BRAND_LIST = "brand_list";
+    /**
+     * 商品添加品类
+     */
+    public final static String ADD_CATEGORY = "add_category";
+    /**
+     * 获取品类列表
+     */
+    public final static String CATEGORY_LIST = "category_list";
+    /**
+     * 商品添加规格
+     */
+    public final static String ADD_SPEC = "add_spec";
+    /**
+     * 获取规格列表
+     */
+    public final static String SPEC_LIST = "spec_list";
+    /**
+     * 商品添加规格
+     */
+    public final static String ADD_SPEC_VALUE = "add_spec_value";
+    /**
+     * 获取规格列表
+     */
+    public final static String SPEC_VALUE_LIST = "spec_value_list";
 }
