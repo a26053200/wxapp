@@ -27,6 +27,8 @@ public class Session
     private String channelId;
     //请求Action
     private String rqstAction;
+    //请求Action
+    private String client;
 
     public Session(ChannelHandlerContext ctx, JSONObject recvJson)
     {
@@ -37,6 +39,8 @@ public class Session
 
         if(recvJson.containsKey("data"))
             this.param = new ParamParser(recvJson);
+        if(recvJson.containsKey("client"))
+            client = recvJson.getString("client");
         this.channelId = recvJson.getString(FieldName.CHANNEL_ID);
         this.rqstAction = recvJson.getString(Action.NAME);
     }
@@ -84,5 +88,10 @@ public class Session
     public String getRqstAction()
     {
         return rqstAction;
+    }
+
+    public String getClient()
+    {
+        return client;
     }
 }

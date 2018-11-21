@@ -16,6 +16,7 @@ public class Bean
     public static final String CATEGORY             = "category";
     public static final String SPU                  = "spu";
     public static final String SPEC                 = "spec";
+    public static final String SPEC_VALUE           = "specValue";
     public static final String Shop                 = "shop";
     public static final String Product              = "product";
 }

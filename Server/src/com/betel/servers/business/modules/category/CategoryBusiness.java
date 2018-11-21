@@ -3,6 +3,7 @@ package com.betel.servers.business.modules.category;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.betel.asd.BaseAction;
+import com.betel.asd.Business;
 import com.betel.common.Monitor;
 import com.betel.consts.Action;
 import com.betel.consts.FieldName;
@@ -24,19 +25,12 @@ import java.util.Iterator;
  * @Author: zhengnan
  * @Date: 2018/11/18 23:00
  */
-public class CategoryAction extends BaseAction<Category>
+public class CategoryBusiness extends Business<Category>
 {
-    public CategoryAction(Monitor monitor)
-    {
-        this.monitor = monitor;
-        this.service = new CategoryService();
-        this.service.setBaseDao(new CategoryDao(monitor.getDB()));
-    }
 
     @Override
-    public void ActionHandler(ChannelHandlerContext ctx, JSONObject jsonObject, String method)
+    public void Handle(Session session, String method)
     {
-        Session session = new Session(ctx, jsonObject);
         switch (method)
         {
             case Action.NONE:
@@ -64,7 +58,7 @@ public class CategoryAction extends BaseAction<Category>
 
         JSONObject sendJson = new JSONObject();
         sendJson.put(FieldName.CATEGORY_INFO, JsonUtils.object2Json(categoryInfo));
-        rspdClient(session, sendJson, ServerName.CLIENT_WEB);
+        action.rspdClient(session, sendJson);
     }
 
     private void getCategoryList(Session session)
@@ -80,6 +74,6 @@ public class CategoryAction extends BaseAction<Category>
             array.add(count++,item);
         }
         sendJson.put(FieldName.CATEGORY_LIST,array);
-        rspdClient(session, sendJson, ServerName.CLIENT_WEB);
+        action.rspdClient(session, sendJson);
     }
 }

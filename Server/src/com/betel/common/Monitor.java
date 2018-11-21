@@ -3,6 +3,7 @@ package com.betel.common;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.betel.asd.BaseAction;
+import com.betel.servers.business.action.ImplAction;
 import com.betel.utils.BytesUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
@@ -46,7 +47,7 @@ public abstract class Monitor
     /**
      * Actions
      */
-    protected HashMap<String, BaseAction<?>> actionMap;
+    protected HashMap<String, ImplAction<?>> actionMap;
 
     public ChannelGroup getChannelGroup()
     {
@@ -98,7 +99,7 @@ public abstract class Monitor
         }
     }
 
-    public BaseAction getAction(String name)
+    public ImplAction getAction(String name)
     {
         return actionMap.get(name);
     }
@@ -113,8 +114,7 @@ public abstract class Monitor
     {
         int msgLen = buf.readableBytes();
         long packHead = buf.readUnsignedInt();
-        long packLen = packHead;
-        String json = BytesUtils.readString(buf, (int) packLen);
+        String json = BytesUtils.readString(buf, (int) packHead);
         logger.info(String.format("[recv] msgLen:%d json:%s", msgLen, json));
         //已知JSONObject,目标要转换为json字符串
         try

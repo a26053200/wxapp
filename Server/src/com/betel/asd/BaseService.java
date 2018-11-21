@@ -12,10 +12,18 @@ import java.util.Set;
  * @Author: zhengnan
  * @Date: 2018/11/18 0:23
  */
-public abstract class BaseService<T> implements IService<T>
+public class BaseService<T> implements IService<T>
 {
-    public abstract BaseDao<T> getBaseDao();//此种实现可提高扩展性
-    public abstract void setBaseDao(BaseDao baseDao);
+    private BaseDao<T> baseDao;
+
+    public BaseDao<T> getBaseDao()
+    {
+        return baseDao;
+    }
+    public void setBaseDao(BaseDao baseDao)
+    {
+        this.baseDao = baseDao;
+    }
     @Override
     public void addEntry(T t)
     {
@@ -53,8 +61,8 @@ public abstract class BaseService<T> implements IService<T>
     }
 
     @Override
-    public void deleteEntry(String id)
+    public boolean deleteEntry(String id)
     {
-        this.getBaseDao().deleteEntry(id);
+        return this.getBaseDao().deleteEntry(id);
     }
 }

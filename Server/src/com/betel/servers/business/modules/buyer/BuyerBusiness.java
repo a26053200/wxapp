@@ -1,33 +1,34 @@
 package com.betel.servers.business.modules.buyer;
 
 import com.alibaba.fastjson.JSONObject;
-import com.betel.asd.BaseAction;
-import com.betel.common.Monitor;
+import com.betel.asd.Business;
 import com.betel.consts.Action;
 import com.betel.consts.Bean;
 import com.betel.consts.FieldName;
 import com.betel.consts.ServerName;
+import com.betel.servers.business.action.ImplAction;
+import com.betel.servers.business.modules.profile.ProfileBusiness;
 import com.betel.servers.business.modules.beans.Buyer;
 import com.betel.servers.business.modules.beans.Profile;
-import com.betel.servers.business.modules.profile.ProfileAction;
-import com.betel.servers.business.modules.record.RecordAction;
+import com.betel.servers.business.modules.record.RecordBusiness;
 import com.betel.session.Session;
-import com.betel.utils.*;
-import io.netty.channel.ChannelHandlerContext;
+import com.betel.utils.HttpRequest;
+import com.betel.utils.StringUtils;
+import com.betel.utils.TimeUtils;
 import org.apache.log4j.Logger;
 
 import java.util.Date;
 import java.util.HashMap;
 
 /**
- * @ClassName: BuyerAction
+ * @ClassName: BuyerBusiness
  * @Description: TODO
  * @Author: zhengnan
- * @Date: 2018/11/18 23:00
+ * @Date: 2018/11/22 0:58
  */
-public class BuyerAction extends BaseAction<Buyer>
+public class BuyerBusiness extends Business<Buyer>
 {
-    final static Logger logger = Logger.getLogger(BuyerAction.class);
+    final static Logger logger = Logger.getLogger(BuyerBusiness.class);
 
     private final String WX_LOGIN_URL = "https://api.weixin.qq.com/sns/jscode2session";
 
@@ -39,19 +40,9 @@ public class BuyerAction extends BaseAction<Buyer>
 
     private HashMap<String, Buyer> buyerMap;
 
-    public BuyerAction(Monitor monitor)
-    {
-        this.monitor = monitor;
-        this.service = new BuyerService();
-        this.service.setBaseDao(new BuyerDao(monitor.getDB()));
-
-        buyerMap = new HashMap<>();
-    }
-
     @Override
-    public void ActionHandler(ChannelHandlerContext ctx, JSONObject jsonObject, String method)
+    public void Handle(Session session, String method)
     {
-        Session session = new Session(ctx, jsonObject);
         switch (method)
         {
             case Action.NONE:
@@ -72,14 +63,14 @@ public class BuyerAction extends BaseAction<Buyer>
         JSONObject sendJson = new JSONObject();
         sendJson.put(FieldName.PROBE_STATE, true);
         sendJson.put(FieldName.PROBE_MSG, "探测返回.服务器运行正常");
-        rspdClient(session, sendJson, ServerName.CLIENT_MP);
+        action.rspdClient(session, sendJson);
     }
 
     // 微信用户登录
     private void login_wx_server(Session session)
     {
-        RecordAction recordAction = (RecordAction) monitor.getAction(Bean.RECORD);
-        ProfileAction profileAction = (ProfileAction) monitor.getAction(Bean.PROFILE);
+        RecordBusiness recordBusiness = (RecordBusiness) monitor.getAction(Bean.RECORD).getBusiness();
+        ProfileBusiness profileBusiness = (ProfileBusiness) monitor.getAction(Bean.PROFILE).getBusiness();
         String nowTime = TimeUtils.date2String(new Date());
         String channelId = session.getChannelId();
         String code = session.getRecvJson().getString("code");
@@ -95,7 +86,7 @@ public class BuyerAction extends BaseAction<Buyer>
         if (StringUtils.isNullOrEmpty(errcode))
         {
             // 用户信息
-            Profile profile = profileAction.profileLogin(session, loginInfoJson);
+            Profile profile = profileBusiness.profileLogin(session, loginInfoJson);
             loginInfoJson.put(FieldName.PROFILE_INFO, JSONObject.toJSON(profile));
 
             // 买家信息
@@ -115,9 +106,9 @@ public class BuyerAction extends BaseAction<Buyer>
 
             loginInfoJson.put(FieldName.BUYER_INFO, JSONObject.toJSON(buyer));
 
-            recordAction.addBuyerLoginRecord(buyer,"微信买家登录");
+            recordBusiness.addBuyerLoginRecord(buyer,"微信买家登录");
         }
-        rspdClient(session, loginInfoJson, ServerName.CLIENT_MP);
+        action.rspdClient(session, loginInfoJson);
     }
 
     public Buyer getBuyerInfo(String channelId)

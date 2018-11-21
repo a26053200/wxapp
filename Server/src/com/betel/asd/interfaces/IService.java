@@ -55,5 +55,5 @@ public interface IService<T>
      *
      * @param id
      */
-    public void deleteEntry(String id);
+    public boolean deleteEntry(String id);
 }

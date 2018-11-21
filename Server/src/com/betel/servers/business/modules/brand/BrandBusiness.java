@@ -3,6 +3,7 @@ package com.betel.servers.business.modules.brand;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.betel.asd.BaseAction;
+import com.betel.asd.Business;
 import com.betel.common.Monitor;
 import com.betel.consts.Action;
 import com.betel.consts.FieldName;
@@ -23,19 +24,11 @@ import java.util.Iterator;
  * @Author: zhengnan
  * @Date: 2018/11/18 23:00
  */
-public class BrandAction extends BaseAction<Brand>
+public class BrandBusiness extends Business<Brand>
 {
-    public BrandAction(Monitor monitor)
-    {
-        this.monitor = monitor;
-        this.service = new BrandService();
-        this.service.setBaseDao(new BrandDao(monitor.getDB()));
-    }
-
     @Override
-    public void ActionHandler(ChannelHandlerContext ctx, JSONObject jsonObject, String method)
+    public void Handle(Session session, String method)
     {
-        Session session = new Session(ctx, jsonObject);
         switch (method)
         {
             case Action.NONE:
@@ -63,7 +56,7 @@ public class BrandAction extends BaseAction<Brand>
 
         JSONObject sendJson = new JSONObject();
         sendJson.put(FieldName.BRAND_INFO, JsonUtils.object2Json(brandInfo));
-        rspdClient(session, sendJson, ServerName.CLIENT_WEB);
+        action.rspdClient(session, sendJson);
     }
 
     private void getBrandList(Session session)
@@ -79,6 +72,6 @@ public class BrandAction extends BaseAction<Brand>
             array.add(count++,item);
         }
         sendJson.put(FieldName.BRAND_LIST,array);
-        rspdClient(session, sendJson, ServerName.CLIENT_WEB);
+        action.rspdClient(session, sendJson);
     }
 }

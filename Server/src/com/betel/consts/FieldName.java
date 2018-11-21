@@ -22,6 +22,8 @@ public class FieldName
 
     public static final String FORWARD_SERVER = "forward_server"; //转发服务器
 
+    public static final String ERROR = "error";
+
     //====================
     // 常用字段名
     //====================
@@ -36,6 +38,10 @@ public class FieldName
     public static final String NUMBER = "number";
 
     public static final String VALUE = "value";
+
+    public static final String BEAN_INFO = "beanInfo";
+
+    public static final String BEAN_LIST = "beanList";
     //====================
     // 登录
     //====================

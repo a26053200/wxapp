@@ -61,5 +61,5 @@ public interface IDao<T>
      * 根据id删除一条数据
      * @param id
      */
-    public void deleteEntry(String id);
+    public boolean deleteEntry(String id);
 }

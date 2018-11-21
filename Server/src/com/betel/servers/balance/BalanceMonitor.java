@@ -31,7 +31,7 @@ public class BalanceMonitor extends Monitor
     // 网关服务器上下文
     public ChannelHandlerContext getGateServerContext()
     {
-        return businessServerContext;
+        return gateServerContext;
     }
     // 业务服务器上下文
     public ChannelHandlerContext getBusinessServerContext()

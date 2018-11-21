@@ -1,25 +1,17 @@
 package com.betel.servers.business.modules.profile;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.betel.asd.BaseAction;
-import com.betel.common.Monitor;
-import com.betel.consts.Action;
+import com.betel.asd.Business;
 import com.betel.consts.FieldName;
 import com.betel.consts.ServerName;
-import com.betel.servers.business.modules.beans.Brand;
 import com.betel.servers.business.modules.beans.Profile;
 import com.betel.session.Session;
-import com.betel.utils.IdGenerator;
-import com.betel.utils.JsonUtils;
 import com.betel.utils.StringUtils;
 import com.betel.utils.TimeUtils;
-import io.netty.channel.ChannelHandlerContext;
 import org.apache.log4j.Logger;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * @ClassName: BuyerAction
@@ -27,33 +19,11 @@ import java.util.Iterator;
  * @Author: zhengnan
  * @Date: 2018/11/18 23:00
  */
-public class ProfileAction extends BaseAction<Profile>
+public class ProfileBusiness extends Business<Profile>
 {
-    final static Logger logger = Logger.getLogger(ProfileAction.class);
+    final static Logger logger = Logger.getLogger(ProfileBusiness.class);
 
-    private HashMap<String, Profile> profileMap;
-
-    public ProfileAction(Monitor monitor)
-    {
-        this.monitor = monitor;
-        this.service = new ProfileService();
-        this.service.setBaseDao(new ProfileDao(monitor.getDB()));
-
-        profileMap = new HashMap<>();
-    }
-
-    @Override
-    public void ActionHandler(ChannelHandlerContext ctx, JSONObject jsonObject, String method)
-    {
-        Session session = new Session(ctx, jsonObject);
-        switch (method)
-        {
-            case Action.NONE:
-                break;
-            default:
-                break;
-        }
-    }
+    private HashMap<String, Profile> profileMap = new HashMap<>();
 
     // 微信用户登录
     public Profile profileLogin(Session session, JSONObject wxLoginInfoJson)

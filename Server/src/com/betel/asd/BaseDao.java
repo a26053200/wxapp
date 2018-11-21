@@ -95,12 +95,19 @@ public class BaseDao<T> implements IDao<T>
     }
 
     @Override
-    public void deleteEntry(String id)
+    public boolean deleteEntry(String id)
     {
         String key = tableName + RedisKeys.SPLIT + id;
         if (db.exists(key))
+        {
             db.del(key);
+            return true;
+        }
+
         else//查不到该记录
+        {
             logger.error(String.format("There is no entry that id == %s",id));
+            return false;
+        }
     }
 }

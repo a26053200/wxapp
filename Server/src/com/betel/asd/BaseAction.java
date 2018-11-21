@@ -4,11 +4,16 @@ package com.betel.asd;
 import com.alibaba.fastjson.JSONObject;
 import com.betel.common.Monitor;
 import com.betel.consts.Action;
+import com.betel.consts.ErrorCode;
 import com.betel.consts.FieldName;
 import com.betel.consts.ServerName;
 import com.betel.session.Session;
 import com.betel.utils.BytesUtils;
+import com.betel.utils.TimeUtils;
 import io.netty.channel.ChannelHandlerContext;
+
+import java.util.Date;
+import java.util.HashMap;
 
 /**
  * @ClassName: BaseAction
@@ -16,50 +21,79 @@ import io.netty.channel.ChannelHandlerContext;
  * @Author: zhengnan
  * @Date: 2018/11/18 0:23
  */
-public class BaseAction<T>
+public abstract class BaseAction<T>
 {
     protected Monitor monitor;
 
-    protected BaseService<T> service;
+    protected HashMap<String, Process> processMap;
 
     public Monitor getMonitor()
     {
         return monitor;
     }
 
-    public BaseService<T> getService()
+    public BaseAction()
     {
-        return service;
+        processMap = new HashMap<>();
     }
 
-    public void ActionHandler(ChannelHandlerContext ctx, JSONObject jsonObject, String subAction)
+    protected void registerProcess(String operate, String bean, Process process)
+    {
+        processMap.put(bean + "_" + operate, process);
+    }
+
+    public Process getProcess(String method)
+    {
+        String[] methods = method.split("_");
+        String bean = methods[0];
+        String operate = methods[1];
+        return processMap.get(bean + "_" + operate);
+    }
+
+    //常规业务
+    public void ActionHandler(ChannelHandlerContext ctx, JSONObject jsonObject, String method)
+    {
+        Session session = new Session(ctx, jsonObject);
+        Process process = getProcess(method);
+        if (process == null)
+        {
+            otherBusiness(session,method);
+        }else{
+            process.done(session);
+        }
+    }
+
+    //其他非常规业务
+    public void otherBusiness(Session session, String method)
+    {
+        rspdClientError(session, ErrorCode.E0002);
+    }
+
+    //返回给客户端错误信息
+    public void rspdClientError(Session session, String error)
     {
 
     }
-
-    //发送给网关
-    protected void send2Gate(ChannelHandlerContext ctx, String msg)
-    {
-        ctx.channel().writeAndFlush(BytesUtils.packBytes(BytesUtils.string2Bytes(msg)));
-    }
-    //回应客户端请求
-//    protected void rspdClient(Session session)
-//    {
-//        rspdClient(session, null);
-//    }
 
     //回应客户端请求 带数据体 (先转发给网关服务器,再由网关服务器转发给客户端)
-    protected void rspdClient(Session session, JSONObject sendJson, String forwardServer)
+    public void rspdClient(Session session, JSONObject sendJson)
     {
         String channelId = session.getChannelId();
         JSONObject rspdJson = new JSONObject();
         rspdJson.put(FieldName.SERVER, ServerName.GATE_SERVER);
-        rspdJson.put(FieldName.FORWARD_SERVER, forwardServer);
+        rspdJson.put(FieldName.FORWARD_SERVER, session.getClient());
         rspdJson.put(Action.NAME, session.getRqstAction());
         rspdJson.put(FieldName.CHANNEL_ID, channelId);
         rspdJson.put(FieldName.STATE, session.getState().ordinal());
-        if(sendJson != null)
+        if (sendJson != null)
             rspdJson.put(FieldName.DATA, sendJson);
-        send2Gate(session.getContext(), rspdJson.toString());
+
+        //发送给网关
+        session.getContext().channel().writeAndFlush(BytesUtils.packBytes(BytesUtils.string2Bytes(rspdJson.toString())));
+    }
+
+    protected String getNowTimeString()
+    {
+        return TimeUtils.date2String(new Date());
     }
 }

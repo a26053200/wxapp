@@ -11,12 +11,12 @@ public class ServerName
     /**
      * 微信小程序客户端
      */
-    public static final String CLIENT_MP = "client_mp";
+    public static final String CLIENT_MP = "mp";
 
     /**
      * 微信小程序客户端
      */
-    public static final String CLIENT_WEB = "client_web";
+    public static final String CLIENT_WEB = "web";
 
     /**
      * 网关服务器

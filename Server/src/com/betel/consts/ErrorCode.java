@@ -8,10 +8,13 @@ package com.betel.consts;
  */
 public class ErrorCode
 {
-    public static String[] code = new String[]
-            {
-                "位置错误",
-                "该分类已经存在",
-                "该品牌已经存在",
-            };
+    public static String E0000 = "未知错误";
+
+    public static String E0001 = "找不到相关Action";
+
+    public static String E0002 = "找不到相关Operate";
+
+    public static String E0003 = "未知错误";
+
+    public static String E0004 = "未知错误";
 }
