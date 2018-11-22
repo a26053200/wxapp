@@ -78,7 +78,7 @@ public class GateMonitor extends Monitor
                 break;
             // 转发给客户端
             case ServerName.GATE_SERVER:
-                String forwardServer = jsonObject.get(FieldName.FORWARD_SERVER).toString();
+                String forwardServer = jsonObject.getString(FieldName.FORWARD_SERVER);
                 forward2Client(jsonObject,forwardServer);
                 break;
             default:

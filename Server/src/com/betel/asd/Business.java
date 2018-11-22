@@ -2,6 +2,8 @@ package com.betel.asd;
 
 import com.betel.asd.interfaces.IBusiness;
 import com.betel.common.Monitor;
+import com.betel.consts.Bean;
+import com.betel.database.RedisKeys;
 import com.betel.servers.business.action.ImplAction;
 import com.betel.servers.business.modules.beans.Spec;
 import com.betel.session.Session;
@@ -15,6 +17,14 @@ import com.betel.session.Session;
 public abstract class Business<T> implements IBusiness<T>
 {
     protected ImplAction action;
+    protected Monitor monitor;
+    protected BaseService<T> service;
+
+    @Override
+    public String getViceKey()
+    {
+        return "";
+    }
 
     public void setAction(ImplAction action)
     {
@@ -23,8 +33,6 @@ public abstract class Business<T> implements IBusiness<T>
         service = action.getService();
     }
 
-    protected Monitor monitor;
-    protected BaseService<T> service;
     @Override
     public T newEntry(Session session)
     {

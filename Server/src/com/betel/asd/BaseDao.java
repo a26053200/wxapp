@@ -19,19 +19,25 @@ public class BaseDao<T> implements IDao<T>
     final static Logger logger = Logger.getLogger(BaseDao.class);
     protected Jedis db;
     protected Class<T> clazz;
-    protected String tableName;
-    public BaseDao(Jedis db,Class<T> clazz)
+
+    private String tableName;
+    private String viceKeyField;
+
+    public BaseDao(Jedis db, Class<T> clazz, String viceKeyField)
     {
         this.db = db;
         this.clazz = clazz;
-        tableName = clazz.getSimpleName();
+        this.tableName = clazz.getSimpleName();
+        this.viceKeyField = viceKeyField;
     }
 
     @Override
     public void addEntry(T t)
     {
         JSONObject json = (JSONObject)JSONObject.toJSON(t);
-        String key = tableName + RedisKeys.SPLIT + json.getString(RedisKeys.ID);
+        //获取副键
+        String viceKey = RedisKeys.NOME.equals(viceKeyField)? RedisKeys.NOME : RedisKeys.SPLIT + json.getString(viceKeyField);
+        String key = tableName + RedisKeys.SPLIT + json.getString(RedisKeys.ID) + viceKey;
         db.set(key,json.toJSONString());
     }
 
@@ -46,7 +52,7 @@ public class BaseDao<T> implements IDao<T>
         }
         else//查不到该记录
         {
-            //logger.error(String.format("There is no entry that id == %s",id));
+            logger.error(String.format("There is no entry that id == %s",id));
             return null;
         }
     }
@@ -67,7 +73,18 @@ public class BaseDao<T> implements IDao<T>
     public List<T> getEntrys()
     {
         String key = tableName + RedisKeys.SPLIT + RedisKeys.WILDCARD;
-        Set<String> keySet = db.keys(key);
+        return getEntryList(db.keys(key));
+    }
+
+    @Override
+    public List<T> getViceEntrys(String viceId)
+    {
+        String key = tableName + RedisKeys.SPLIT + RedisKeys.WILDCARD + RedisKeys.SPLIT + viceId;
+        return getEntryList(db.keys(key));
+    }
+
+    private List<T> getEntryList(Set<String> keySet)
+    {
         List<T> list = new ArrayList<>();
         Iterator<String> it = keySet.iterator();
         while (it.hasNext())

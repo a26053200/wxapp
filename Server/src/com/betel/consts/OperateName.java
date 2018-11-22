@@ -13,6 +13,10 @@ public class OperateName
      */
     public final static String LIST = "list";
     /**
+     * 查询副键列表
+     */
+    public final static String VICE_LIST = "viceList";
+    /**
      * 查询单个信息
      */
     public final static String QUERY = "query";
@@ -23,7 +27,7 @@ public class OperateName
     /**
      * 删除
      */
-    public final static String DEL = "query";
+    public final static String DEL = "del";
     /**
      * 修改
      */

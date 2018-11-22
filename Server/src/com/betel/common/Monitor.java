@@ -40,10 +40,7 @@ public abstract class Monitor
      * 数据库
      */
     protected Jedis db;
-    /**
-     * 子Monitor
-     */
-    protected HashMap<String, SubMonitor> subMonitorMap;
+
     /**
      * Actions
      */
@@ -84,19 +81,9 @@ public abstract class Monitor
         //所有已经链接的通道,用于广播
         channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
         contextMap = new HashMap<>();
-        subMonitorMap = new HashMap<>();
         actionMap = new HashMap<>();
         //初始化数据库
         initDB();
-    }
-
-    protected void InitSubMonitors()
-    {
-        Iterator iterator = subMonitorMap.keySet().iterator();
-        while (iterator.hasNext()) {
-            Object key = iterator.next();
-            subMonitorMap.get(key).Init();
-        }
     }
 
     public ImplAction getAction(String name)
@@ -197,12 +184,6 @@ public abstract class Monitor
         {
             ex.printStackTrace();
         }
-    }
-
-
-    public SubMonitor getSubMonitor(String mntName)
-    {
-        return subMonitorMap.get(mntName);
     }
 
     /**

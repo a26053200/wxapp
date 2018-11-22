@@ -39,15 +39,15 @@ public abstract class BaseAction<T>
 
     protected void registerProcess(String operate, String bean, Process process)
     {
-        processMap.put(bean + "_" + operate, process);
+        processMap.put(operate + "_" + bean, process);
     }
 
     public Process getProcess(String method)
     {
         String[] methods = method.split("_");
-        String bean = methods[0];
-        String operate = methods[1];
-        return processMap.get(bean + "_" + operate);
+        String operate = methods[0];
+        String bean = methods[1];
+        return processMap.get(operate + "_" + bean);
     }
 
     //常规业务
@@ -87,13 +87,7 @@ public abstract class BaseAction<T>
         rspdJson.put(FieldName.STATE, session.getState().ordinal());
         if (sendJson != null)
             rspdJson.put(FieldName.DATA, sendJson);
-
         //发送给网关
         session.getContext().channel().writeAndFlush(BytesUtils.packBytes(BytesUtils.string2Bytes(rspdJson.toString())));
-    }
-
-    protected String getNowTimeString()
-    {
-        return TimeUtils.date2String(new Date());
     }
 }

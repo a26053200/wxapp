@@ -37,6 +37,12 @@ public interface IService<T>
     public List<T> getEntrys();
 
     /**
+     * 不分页的查询副键列表
+     * @return
+     */
+    public List<T> getViceEntrys(String viceId);
+
+    /**
      * 修改
      *
      * @param t

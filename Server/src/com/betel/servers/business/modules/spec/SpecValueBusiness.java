@@ -18,8 +18,12 @@ import java.util.Date;
  */
 public class SpecValueBusiness extends Business<SpecValue>
 {
-
-
+    private static final String ViceKey = "specId";
+    @Override
+    public String getViceKey()
+    {
+        return ViceKey;
+    }
     @Override
     public SpecValue newEntry(Session session)
     {
@@ -27,7 +31,7 @@ public class SpecValueBusiness extends Business<SpecValue>
 
         SpecValue specValueInfo = new SpecValue();
         specValueInfo.setId(Long.toString(IdGenerator.getInstance().nextId()));
-        specValueInfo.setSpecId(session.getRecvJson().getString(FieldName.ID));
+        specValueInfo.setSpecId(session.getRecvJson().getString(ViceKey));
         specValueInfo.setValue(session.getRecvJson().getString(FieldName.VALUE));
         specValueInfo.setAddTime(nowTime);
         specValueInfo.setUpdateTime(nowTime);

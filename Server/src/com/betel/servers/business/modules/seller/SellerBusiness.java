@@ -1,21 +1,16 @@
 package com.betel.servers.business.modules.seller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.betel.asd.BaseAction;
 import com.betel.asd.Business;
-import com.betel.common.Monitor;
 import com.betel.consts.Action;
 import com.betel.consts.Bean;
 import com.betel.consts.FieldName;
-import com.betel.consts.ServerName;
 import com.betel.database.RedisKeys;
 import com.betel.servers.business.action.ImplAction;
 import com.betel.servers.business.modules.beans.Profile;
 import com.betel.servers.business.modules.beans.Seller;
-import com.betel.servers.business.modules.profile.ProfileBusiness;
 import com.betel.session.Session;
 import com.betel.utils.JwtHelper;
-import io.netty.channel.ChannelHandlerContext;
 import org.apache.log4j.Logger;
 
 import java.util.HashMap;
@@ -74,8 +69,8 @@ public class SellerBusiness extends Business<Seller>
             case Action.WEB_SCAN_LOGIN:// 扫码登录
                 webScanCodeLogin(session);
                 break;
-            case Action.WEB_LOGIN:// 直接登录
-                webLogin(session);
+            case Action.WEB_QUICK_LOGIN:// 快速登录
+                webQuickLogin(session);
                 break;
             case Action.MP_SCAN_WEB_LOGIN:
                 mpScanWebLogin(session);
@@ -104,7 +99,7 @@ public class SellerBusiness extends Business<Seller>
         action.rspdClient(session, sendJson);
     }
     // Web用户请求扫码登录
-    private void webLogin(Session session)
+    private void webQuickLogin(Session session)
     {
         String profileId = session.getRecvJson().getString("profileId");
         ImplAction<Profile> profileAction = monitor.getAction(Bean.PROFILE);

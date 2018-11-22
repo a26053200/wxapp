@@ -14,6 +14,7 @@ import com.betel.servers.business.modules.profile.ProfileBusiness;
 import com.betel.servers.business.modules.record.RecordBusiness;
 import com.betel.servers.business.modules.seller.SellerBusiness;
 import com.betel.servers.business.modules.spec.SpecBusiness;
+import com.betel.servers.business.modules.spec.SpecValueBusiness;
 import com.betel.utils.BytesUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -34,15 +35,15 @@ public class BusinessMonitor extends Monitor
     public BusinessMonitor()
     {
         super();
-        InitSubMonitors();
 
-        actionMap.put(Bean.RECORD,      new ImplAction<>(this, Bean.RECORD,     Record.class, new RecordBusiness()));
-        actionMap.put(Bean.PROFILE,     new ImplAction<>(this, Bean.PROFILE,    Profile.class, new ProfileBusiness()));
-        actionMap.put(Bean.BUYER,       new ImplAction<>(this, Bean.BUYER,      Buyer.class, new BuyerBusiness()));
-        actionMap.put(Bean.SELLER,      new ImplAction<>(this, Bean.SELLER,     Seller.class, new SellerBusiness()));
-        actionMap.put(Bean.BRAND,       new ImplAction<>(this, Bean.BRAND,      Brand.class, new BrandBusiness()));
-        actionMap.put(Bean.CATEGORY,    new ImplAction<>(this, Bean.CATEGORY,   Category.class, new CategoryBusiness()));
-        actionMap.put(Bean.SPEC,        new ImplAction<>(this, Bean.SPEC,       Spec.class, new SpecBusiness()));
+        actionMap.put(Bean.RECORD,      new ImplAction<>(this, Bean.RECORD,     Record.class,       new RecordBusiness()));
+        actionMap.put(Bean.PROFILE,     new ImplAction<>(this, Bean.PROFILE,    Profile.class,      new ProfileBusiness()));
+        actionMap.put(Bean.BUYER,       new ImplAction<>(this, Bean.BUYER,      Buyer.class,        new BuyerBusiness()));
+        actionMap.put(Bean.SELLER,      new ImplAction<>(this, Bean.SELLER,     Seller.class,       new SellerBusiness()));
+        actionMap.put(Bean.BRAND,       new ImplAction<>(this, Bean.BRAND,      Brand.class,        new BrandBusiness()));
+        actionMap.put(Bean.CATEGORY,    new ImplAction<>(this, Bean.CATEGORY,   Category.class,     new CategoryBusiness()));
+        actionMap.put(Bean.SPEC,        new ImplAction<>(this, Bean.SPEC,       Spec.class,         new SpecBusiness()));
+        actionMap.put(Bean.SPEC_VALUE,  new ImplAction<>(this, Bean.SPEC_VALUE, SpecValue.class,    new SpecValueBusiness()));
     }
     public void SetGameServerClient(BusinessClient businessServerClient)
     {

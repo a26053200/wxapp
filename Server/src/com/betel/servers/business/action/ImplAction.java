@@ -37,7 +37,7 @@ public class ImplAction<T> extends BaseAction<T>
         return service;
     }
 
-    public ImplAction(Monitor monitor, String bean, Class<T> clazz, Business business)
+    public ImplAction(Monitor monitor, String bean, Class<T> clazz, Business<T> business)
     {
         super();
         this.monitor = monitor;
@@ -45,14 +45,15 @@ public class ImplAction<T> extends BaseAction<T>
         this.business = business;
 
         this.service = new BaseService<T>();
-        this.service.setBaseDao(new BaseDao<T>(monitor.getDB(),clazz));
+        this.service.setBaseDao(new BaseDao<T>(monitor.getDB(),clazz,business.getViceKey()));
         this.business.setAction(this);
         //增删改查
-        registerProcess(OperateName.ADD,    bean, new AddEntry());
-        registerProcess(OperateName.QUERY,  bean, new QueryEntry());
-        registerProcess(OperateName.LIST,   bean, new GetEntryList());
-        registerProcess(OperateName.MOD,    bean, new DelEntry());
-        registerProcess(OperateName.DEL,    bean, new ModEntry());
+        registerProcess(OperateName.ADD,        bean, new AddEntry());
+        registerProcess(OperateName.QUERY,      bean, new QueryEntry());
+        registerProcess(OperateName.LIST,       bean, new GetEntryList());
+        registerProcess(OperateName.VICE_LIST,  bean, new GetViceEntryList());
+        registerProcess(OperateName.MOD,        bean, new DelEntry());
+        registerProcess(OperateName.DEL,        bean, new ModEntry());
     }
 
     @Override
@@ -102,6 +103,27 @@ public class ImplAction<T> extends BaseAction<T>
         {
             JSONObject sendJson = new JSONObject();
             Iterator<T> it = service.getEntrys().iterator();
+            JSONArray array = new JSONArray();
+            int count = 0;
+            while (it.hasNext())
+            {
+                JSONObject item = JsonUtils.object2Json(it.next());
+                item.put(FieldName.KEY, Integer.toString(count));
+                array.add(count++, item);
+            }
+            sendJson.put(FieldName.BEAN_LIST, array);
+            rspdClient(session, sendJson);
+        }
+    }
+
+    class GetViceEntryList extends Process
+    {
+        @Override
+        public void done(Session session)
+        {
+            String viceId = session.getRecvJson().getString(business.getViceKey());
+            JSONObject sendJson = new JSONObject();
+            Iterator<T> it = service.getViceEntrys(viceId).iterator();
             JSONArray array = new JSONArray();
             int count = 0;
             while (it.hasNext())

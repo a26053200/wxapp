@@ -1,7 +1,6 @@
 package com.betel.asd;
 
 import com.betel.asd.interfaces.IService;
-import com.betel.servers.business.modules.brand.BrandDao;
 
 import java.util.List;
 import java.util.Set;
@@ -46,6 +45,12 @@ public class BaseService<T> implements IService<T>
     public List<T> getEntrys()
     {
         return this.getBaseDao().getEntrys();
+    }
+
+    @Override
+    public List<T> getViceEntrys(String viceId)
+    {
+        return this.getBaseDao().getViceEntrys(viceId);
     }
 
     @Override

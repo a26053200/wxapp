@@ -4,9 +4,30 @@ import com.betel.session.Session;
 
 public interface IBusiness<T>
 {
-    public T newEntry(Session session);
+    /**
+     * 获取实体副键通配键值
+     * @return
+     */
+    String getViceKey();
 
-    public void updateEntry(Session session, T t);
+    /**
+     * 新建一个实体
+     * @param session
+     * @return
+     */
+    T newEntry(Session session);
 
+    /**
+     * 更新一个实体
+     * @param session
+     * @param t
+     */
+    void updateEntry(Session session, T t);
+
+    /**
+     * 处理业务
+     * @param session
+     * @param method
+     */
     void Handle(Session session, String method);
 }
