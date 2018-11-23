@@ -27,7 +27,7 @@ public class FieldName
     //====================
     // 常用字段名
     //====================
-    public static final String ID = "name";
+    public static final String ID = "id";
 
     public static final String NAME = "name";
 

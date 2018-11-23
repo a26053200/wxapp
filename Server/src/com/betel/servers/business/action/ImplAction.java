@@ -52,8 +52,8 @@ public class ImplAction<T> extends BaseAction<T>
         registerProcess(OperateName.QUERY,      bean, new QueryEntry());
         registerProcess(OperateName.LIST,       bean, new GetEntryList());
         registerProcess(OperateName.VICE_LIST,  bean, new GetViceEntryList());
-        registerProcess(OperateName.MOD,        bean, new DelEntry());
-        registerProcess(OperateName.DEL,        bean, new ModEntry());
+        registerProcess(OperateName.MOD,        bean, new ModEntry());
+        registerProcess(OperateName.DEL,        bean, new DelEntry());
     }
 
     @Override
