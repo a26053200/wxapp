@@ -29,23 +29,7 @@ public class CategoryBusiness extends Business<Category>
 {
 
     @Override
-    public void Handle(Session session, String method)
-    {
-        switch (method)
-        {
-            case Action.NONE:
-                break;
-            case Action.ADD_CATEGORY:
-                addCategory(session);
-                break;
-            case Action.CATEGORY_LIST:
-                getCategoryList(session);
-                break;
-            default:
-                break;
-        }
-    }
-    private void addCategory(Session session)
+    public Category newEntry(Session session)
     {
         String nowTime = TimeUtils.date2String(new Date());
 
@@ -54,26 +38,20 @@ public class CategoryBusiness extends Business<Category>
         categoryInfo.setName(session.getRecvJson().getString(FieldName.NAME));
         categoryInfo.setAddTime(nowTime);
         categoryInfo.setUpdateTime(nowTime);
-        service.addEntry(categoryInfo);
 
-        JSONObject sendJson = new JSONObject();
-        sendJson.put(FieldName.CATEGORY_INFO, JsonUtils.object2Json(categoryInfo));
-        action.rspdClient(session, sendJson);
+        return categoryInfo;
     }
 
-    private void getCategoryList(Session session)
+    @Override
+    public Category updateEntry(Session session)
     {
-        JSONObject sendJson = new JSONObject();
-        Iterator<Category> it = service.getEntrys().iterator();
-        JSONArray array = new JSONArray();
-        int count = 0;
-        while (it.hasNext())
+        String nowTime = TimeUtils.date2String(new Date());
+        Category categoryInfo = service.getEntryById(session.getRecvJson().getString(FieldName.ID));
+        if(categoryInfo != null)
         {
-            JSONObject item = JsonUtils.object2Json(it.next());
-            item.put(FieldName.KEY,Integer.toString(count));
-            array.add(count++,item);
+            categoryInfo.setName(session.getRecvJson().getString(FieldName.NAME));
+            categoryInfo.setUpdateTime(nowTime);
         }
-        sendJson.put(FieldName.CATEGORY_LIST,array);
-        action.rspdClient(session, sendJson);
+        return categoryInfo;
     }
 }

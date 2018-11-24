@@ -26,52 +26,29 @@ import java.util.Iterator;
  */
 public class BrandBusiness extends Business<Brand>
 {
+
     @Override
-    public void Handle(Session session, String method)
+    public Brand newEntry(Session session)
     {
-        switch (method)
-        {
-            case Action.NONE:
-                break;
-            case Action.ADD_BRAND:
-                addBrand(session);
-                break;
-            case Action.BRAND_LIST:
-                getBrandList(session);
-                break;
-            default:
-                break;
-        }
-    }
-    private void addBrand(Session session)
-    {
-        String nowTime = TimeUtils.date2String(new Date());
+        String nowTime = now();
 
         Brand brandInfo = new Brand();
         brandInfo.setId(Long.toString(IdGenerator.getInstance().nextId()));
         brandInfo.setName(session.getRecvJson().getString(FieldName.NAME));
         brandInfo.setAddTime(nowTime);
         brandInfo.setUpdateTime(nowTime);
-        service.addEntry(brandInfo);
-
-        JSONObject sendJson = new JSONObject();
-        sendJson.put(FieldName.BRAND_INFO, JsonUtils.object2Json(brandInfo));
-        action.rspdClient(session, sendJson);
+        return  brandInfo;
     }
 
-    private void getBrandList(Session session)
+    @Override
+    public Brand updateEntry(Session session)
     {
-        JSONObject sendJson = new JSONObject();
-        Iterator<Brand> it = service.getEntrys().iterator();
-        JSONArray array = new JSONArray();
-        int count = 0;
-        while (it.hasNext())
+        Brand brandInfo = service.getEntryById(session.getRecvJson().getString(FieldName.ID));
+        if(brandInfo != null)
         {
-            JSONObject item = JsonUtils.object2Json(it.next());
-            item.put(FieldName.KEY,Integer.toString(count));
-            array.add(count++,item);
+            brandInfo.setName(session.getRecvJson().getString(FieldName.NAME));
+            brandInfo.setUpdateTime(now());
         }
-        sendJson.put(FieldName.BRAND_LIST,array);
-        action.rspdClient(session, sendJson);
+        return brandInfo;
     }
 }

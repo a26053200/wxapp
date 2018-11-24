@@ -7,6 +7,10 @@ import com.betel.database.RedisKeys;
 import com.betel.servers.business.action.ImplAction;
 import com.betel.servers.business.modules.beans.Spec;
 import com.betel.session.Session;
+import com.betel.utils.TimeUtils;
+import org.apache.log4j.Logger;
+
+import java.util.Date;
 
 /**
  * @ClassName: Business
@@ -16,6 +20,7 @@ import com.betel.session.Session;
  */
 public abstract class Business<T> implements IBusiness<T>
 {
+    final static Logger logger = Logger.getLogger(Business.class);
     protected ImplAction action;
     protected Monitor monitor;
     protected BaseService<T> service;
@@ -40,14 +45,19 @@ public abstract class Business<T> implements IBusiness<T>
     }
 
     @Override
-    public void updateEntry(Session session, T t)
+    public T updateEntry(Session session)
     {
-
+        return null;
     }
 
     @Override
     public void Handle(Session session, String method)
     {
+        logger.error(Business.class.getSimpleName() + " is no Handle service for method:" + method);
+    }
 
+    protected String now()
+    {
+        return TimeUtils.date2String(new Date());
     }
 }

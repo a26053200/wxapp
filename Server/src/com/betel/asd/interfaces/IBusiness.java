@@ -20,9 +20,9 @@ public interface IBusiness<T>
     /**
      * 更新一个实体
      * @param session
-     * @param t
+     * @return
      */
-    void updateEntry(Session session, T t);
+    T updateEntry(Session session);
 
     /**
      * 处理业务

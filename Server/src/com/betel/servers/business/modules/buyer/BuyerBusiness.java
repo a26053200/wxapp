@@ -71,7 +71,7 @@ public class BuyerBusiness extends Business<Buyer>
     {
         RecordBusiness recordBusiness = (RecordBusiness) monitor.getAction(Bean.RECORD).getBusiness();
         ProfileBusiness profileBusiness = (ProfileBusiness) monitor.getAction(Bean.PROFILE).getBusiness();
-        String nowTime = TimeUtils.date2String(new Date());
+        String nowTime = now();
         String channelId = session.getChannelId();
         String code = session.getRecvJson().getString("code");
 

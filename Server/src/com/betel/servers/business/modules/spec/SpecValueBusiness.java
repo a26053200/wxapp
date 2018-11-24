@@ -1,10 +1,13 @@
 package com.betel.servers.business.modules.spec;
 
+import com.alibaba.fastjson.JSONObject;
 import com.betel.asd.Business;
 import com.betel.consts.FieldName;
+import com.betel.database.RedisKeys;
 import com.betel.servers.business.modules.beans.Spec;
 import com.betel.servers.business.modules.beans.SpecValue;
 import com.betel.session.Session;
+import com.betel.session.SessionState;
 import com.betel.utils.IdGenerator;
 import com.betel.utils.TimeUtils;
 
@@ -39,10 +42,18 @@ public class SpecValueBusiness extends Business<SpecValue>
     }
 
     @Override
-    public void updateEntry(Session session, SpecValue specValueInfo)
+    public SpecValue updateEntry(Session session)
     {
-        String nowTime = TimeUtils.date2String(new Date());
-        specValueInfo.setValue(session.getRecvJson().getString(FieldName.VALUE));
-        specValueInfo.setUpdateTime(nowTime);
+        JSONObject sendJson = session.getRecvJson();
+        String id = sendJson.getString(FieldName.ID);
+        String vid = sendJson.getString(ViceKey);
+        SpecValue specValueInfo = service.getEntryById(id + RedisKeys.SPLIT + vid);
+        if(specValueInfo != null)
+        {
+            String nowTime = TimeUtils.date2String(new Date());
+            specValueInfo.setValue(session.getRecvJson().getString(FieldName.VALUE));
+            specValueInfo.setUpdateTime(nowTime);
+        }
+        return specValueInfo;
     }
 }

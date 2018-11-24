@@ -159,11 +159,9 @@ public class ImplAction<T> extends BaseAction<T>
         public void done(Session session)
         {
             JSONObject sendJson = new JSONObject();
-            String id = session.getRecvJson().getString(FieldName.ID);
-            T t = service.getEntryById(id);
+            T t = business.updateEntry(session);
             if(t != null)
             {
-                business.updateEntry(session,t);
                 service.updateEntry(t);
                 session.setState(SessionState.Success);
             }else{

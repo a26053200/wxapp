@@ -1,10 +1,7 @@
 package com.betel.servers.business.modules.spec;
 
 import com.betel.asd.Business;
-import com.betel.consts.Bean;
 import com.betel.consts.FieldName;
-import com.betel.consts.ServerName;
-import com.betel.database.RedisKeys;
 import com.betel.servers.business.modules.beans.Spec;
 import com.betel.session.Session;
 import com.betel.utils.IdGenerator;
@@ -35,11 +32,16 @@ public class SpecBusiness extends Business<Spec>
     }
 
     @Override
-    public void updateEntry(Session session, Spec spec)
+    public Spec updateEntry(Session session)
     {
         String nowTime = TimeUtils.date2String(new Date());
-        spec.setName(session.getRecvJson().getString(FieldName.NAME));
-        spec.setNumber(session.getRecvJson().getString(FieldName.NUMBER));
-        spec.setUpdateTime(nowTime);
+        Spec spec = service.getEntryById(session.getRecvJson().getString(FieldName.ID));
+        if(spec != null)
+        {
+            spec.setName(session.getRecvJson().getString(FieldName.NAME));
+            spec.setNumber(session.getRecvJson().getString(FieldName.NUMBER));
+            spec.setUpdateTime(nowTime);
+        }
+        return spec;
     }
 }

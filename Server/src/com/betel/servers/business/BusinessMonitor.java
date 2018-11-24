@@ -67,18 +67,22 @@ public class BusinessMonitor extends Monitor
     @Override
     protected void RespondJson(ChannelHandlerContext ctx, JSONObject jsonObject)
     {
-        String actionParam = jsonObject.getString("action");
-        String[] actions = actionParam.split("@");
-        logger.info("Recv action: " + actionParam);
-        String actionName = actions[0];
-        String actionMethod = actions.length > 1 ? actions[1] : Action.NONE;
-        BaseAction action = actionMap.get(actionName);
-        if (action != null)
-            action.ActionHandler(ctx, jsonObject, actionMethod);
-        else
+        if (jsonObject.containsKey(Action.NAME))
         {
-            logger.error("There is no action service for action:" + actionParam);
+            String actionParam = jsonObject.getString(Action.NAME);
+            String[] actions = actionParam.split("@");
+            logger.info("Recv action: " + actionParam);
+            String actionName = actions[0];
+            String actionMethod = actions.length > 1 ? actions[1] : Action.NONE;
+            BaseAction action = actionMap.get(actionName);
+            if (action != null)
+                action.ActionHandler(ctx, jsonObject, actionMethod);
+            else
+                logger.error("There is no action service for action:" + actionParam);
+        }else{
+            logger.error("There is no action service for receive json:" + jsonObject.toString());
         }
+
 
     }
 }
