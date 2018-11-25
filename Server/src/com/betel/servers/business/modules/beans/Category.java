@@ -9,6 +9,7 @@ package com.betel.servers.business.modules.beans;
 public class Category
 {
     private String id;
+    private String pid;         //父级分类ID
     private String name;
     private String addTime;    //添加时间
     private String updateTime;    //添加时间
@@ -21,6 +22,16 @@ public class Category
     public void setId(String id)
     {
         this.id = id;
+    }
+
+    public String getPid()
+    {
+        return pid;
+    }
+
+    public void setPid(String pid)
+    {
+        this.pid = pid;
     }
 
     public String getName()

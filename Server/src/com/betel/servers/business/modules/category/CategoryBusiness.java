@@ -27,7 +27,12 @@ import java.util.Iterator;
  */
 public class CategoryBusiness extends Business<Category>
 {
-
+    private static final String ViceKey = "pid";
+    @Override
+    public String getViceKey()
+    {
+        return ViceKey;
+    }
     @Override
     public Category newEntry(Session session)
     {
@@ -35,6 +40,7 @@ public class CategoryBusiness extends Business<Category>
 
         Category categoryInfo = new Category();
         categoryInfo.setId(Long.toString(IdGenerator.getInstance().nextId()));
+        categoryInfo.setPid(session.getRecvJson().getString(ViceKey));
         categoryInfo.setName(session.getRecvJson().getString(FieldName.NAME));
         categoryInfo.setAddTime(nowTime);
         categoryInfo.setUpdateTime(nowTime);

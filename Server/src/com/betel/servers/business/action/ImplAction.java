@@ -7,6 +7,7 @@ import com.betel.asd.Process;
 import com.betel.common.Monitor;
 import com.betel.consts.FieldName;
 import com.betel.consts.OperateName;
+import com.betel.database.RedisKeys;
 import com.betel.session.Session;
 import com.betel.session.SessionState;
 import com.betel.utils.JsonUtils;
@@ -143,8 +144,15 @@ public class ImplAction<T> extends BaseAction<T>
         public void done(Session session)
         {
             JSONObject sendJson = new JSONObject();
+            String viceKey = business.getViceKey();
             String id = session.getRecvJson().getString(FieldName.ID);
-            boolean success = service.deleteEntry(id);
+            String key = id;
+            if(!"".equals(viceKey))
+            {
+                String vid = session.getRecvJson().getString(viceKey);
+                key = id + RedisKeys.SPLIT + vid;
+            }
+            boolean success = service.deleteEntry(key);
             if(success)
                 session.setState(SessionState.Success);
             else
